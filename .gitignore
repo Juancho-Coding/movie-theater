@@ -1,0 +1,14 @@
+*/node_modules/
+*.log
+*/.env
+*/Thumbs.db
+*/.vs_code/
+
+*/.vite/
+*/.vitepress/
+*/.vite-cache/
+*/.eslintcache
+*/coverage/
+*/*.bak
+backend/dist/
+backend/build/
