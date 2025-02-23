@@ -1,15 +1,15 @@
 import { Box } from "@mui/material";
 import classes from "./MainMovies.module.css";
+import Header from "../components/header/Header";
+import MovieSectionManager from "../components/MovieCard/MovieSectionManager";
 
 const MainMovies = () => {
   return (
     <Box className={classes.main_container}>
       {/* header section */}
-      <Box>header section</Box>
+      <Header />
       {/*  Current movies section */}
-      <Box>Current movies section</Box>
-      {/*  Upcoming movies section */}
-      <Box>Upcoming movies section</Box>
+      <MovieSectionManager />
     </Box>
   );
 };

@@ -7,10 +7,10 @@ const theme = createTheme({
   },
   palette: {
     primary: {
-      main: "#DB504A",
+      main: "#AD343E",
     },
     secondary: {
-      main: "#AFD5AA",
+      main: "#474747",
     },
     error: {
       main: "#e90505",
@@ -25,6 +25,7 @@ const theme = createTheme({
       main: "#188814",
     },
   },
+  status: {},
 });
 
 const MainTheme = ({ children }: props) => {

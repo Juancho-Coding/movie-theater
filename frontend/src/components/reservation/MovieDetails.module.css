@@ -1,0 +1,42 @@
+.details-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin: 5px;
+  padding: 20px;
+  background-color: white;
+  row-gap: 10px;
+  max-height: 100%;
+  min-height: 0;
+  width: 0%;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-container {
+  max-width: 100%;
+  height: auto;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  max-width: 100%;
+}
+
+.chips-container {
+  display: flex;
+  row-gap: 5px;
+  column-gap: 7px;
+  flex-wrap: wrap;
+}
+
+.band {
+  background-color: rgb(56, 56, 56);
+  width: 5px;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}

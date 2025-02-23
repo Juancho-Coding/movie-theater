@@ -1,0 +1,32 @@
+.content-container {
+  padding: 20px;
+  background-color: rgb(247, 243, 243);
+}
+
+.filter-container {
+  display: flex;
+  flex-direction: row;
+  column-gap: 10px;
+  justify-content: left;
+  align-items: center;
+}
+
+.movies-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 10px;
+  row-gap: 20px;
+  column-gap: 20px;
+}
+
+@media (max-width: 500px) {
+  .movies-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (min-width: 501px) and (max-width: 1200px) {
+  .movies-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

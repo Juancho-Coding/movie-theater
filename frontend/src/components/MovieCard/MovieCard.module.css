@@ -1,0 +1,63 @@
+.card-content {
+  display: flex;
+  flex-direction: row;
+  row-gap: 5px;
+  max-height: 400px;
+  background-color: rgb(247, 247, 247) !important;
+}
+
+.card-content_minimal {
+  position: relative;
+}
+
+.card-media-img {
+  max-width: 50%;
+  object-fit: cover;
+}
+
+.card-media-img_minimal {
+  max-width: 100%;
+  object-fit: contain !important;
+}
+
+.info-content {
+  display: flex;
+  flex-direction: column;
+  row-gap: 8px;
+  overflow-y: auto;
+}
+
+.info-content_minimal {
+  display: none;
+  position: absolute;
+  justify-content: center;
+  top: 0;
+  background-color: rgba(255, 255, 255, 0.85);
+  height: 100%;
+}
+
+.info-content_minimal_hover {
+  display: flex;
+}
+
+.chips-content {
+  display: flex;
+  row-gap: 4px;
+  column-gap: 4px;
+  flex-wrap: wrap;
+}
+
+.times-container {
+  display: flex;
+  flex-direction: column;
+  row-gap: 3px;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+.times {
+  display: flex;
+  row-gap: 3px;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
