@@ -1,0 +1,17 @@
+.reservation-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.details-container {
+  max-width: 30%;
+}
+
+@media (max-width: 700px) {
+  .reservation-container {
+    flex-direction: column;
+  }
+  .details-container {
+    max-width: 100%;
+  }
+}

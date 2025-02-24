@@ -7,8 +7,6 @@
   background-color: white;
   row-gap: 10px;
   max-height: 100%;
-  min-height: 0;
-  width: 0%;
   overflow: hidden;
   position: relative;
 }
@@ -39,4 +37,38 @@
   position: absolute;
   top: 0;
   left: 0;
+}
+
+@media (max-width: 700px) {
+  .details-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: repeat(3, auto);
+    grid-template-areas:
+      "image title"
+      "image description"
+      "image chips";
+    background-color: white;
+    width: 100%;
+    height: auto;
+    column-gap: 10px;
+  }
+
+  #title-container {
+    grid-area: title;
+    padding: 10px;
+  }
+
+  .image-container {
+    border-radius: 0;
+    grid-area: image;
+  }
+
+  #description {
+    grid-area: description;
+  }
+
+  .chips-container {
+    grid-area: chips;
+  }
 }

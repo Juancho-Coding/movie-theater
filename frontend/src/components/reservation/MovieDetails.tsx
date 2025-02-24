@@ -2,16 +2,10 @@ import { Box, Chip, Typography } from "@mui/material";
 
 import classes from "./MovieDetails.module.css";
 
-const MovieDetails = ({
-  flexGrow,
-  title,
-  description,
-  chips,
-  imageUrl,
-}: props) => {
+const MovieDetails = ({ title, description, chips, imageUrl }: props) => {
   return (
-    <Box flexGrow={flexGrow} className={classes["details-container"]}>
-      <Box>
+    <Box className={classes["details-container"]}>
+      <Box id="title-container">
         <Typography variant="h5" fontWeight="800">
           {title}
         </Typography>
@@ -23,10 +17,9 @@ const MovieDetails = ({
           alt={imageUrl.alt}
         />
       </Box>
-      <Typography variant="h6" sx={{ textDecoration: "underline" }}>
-        Description
-      </Typography>
       <Typography
+        id="description"
+        component="div"
         variant="body2"
         noWrap={false}
         sx={{
@@ -59,7 +52,6 @@ interface props {
   id: string;
   chips: string[];
   imageUrl: { url: string; alt: string };
-  flexGrow: number;
 }
 
 export default MovieDetails;
