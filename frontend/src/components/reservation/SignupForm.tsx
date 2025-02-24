@@ -118,7 +118,7 @@ const SignupForm = ({ signup, dismiss }: props) => {
             helperText={error ? "The password doesn't match" : ""}
           />
         </Box>
-        <Box margin="auto" mb="5px">
+        <Box className={classes["form-alternative-option"]}>
           <Typography variant="body2">
             {"I already have an account, "}
             <Button

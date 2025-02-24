@@ -11,7 +11,7 @@
 }
 
 .form-title {
-  height: 40px;
+  min-height: 40px;
   background-color: #3099cc;
   padding: 10px;
   margin-bottom: 20px;
@@ -25,7 +25,29 @@
   padding: 20px;
 }
 
+.form-alternative-option {
+  margin: auto;
+  margin-bottom: 10px;
+}
+
 .form-options {
   margin: auto;
   padding: 10px;
+}
+
+@media (max-width: 700px) {
+  .paper-container {
+    width: 90%;
+  }
+
+  .form-alternative-option {
+    margin-left: 20px;
+  }
+
+  .form-options {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+    align-items: center;
+  }
 }

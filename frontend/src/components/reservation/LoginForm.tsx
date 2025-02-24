@@ -70,7 +70,7 @@ const LoginForm = ({ login, dummyLogin, dismiss }: props) => {
             onChange={changePasswordHandler}
           />
         </Box>
-        <Box margin="auto" mb="10px">
+        <Box className={classes["form-alternative-option"]}>
           <Typography variant="body2">
             {"I dont have an account, "}
             <Button
