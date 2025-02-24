@@ -6,6 +6,7 @@ import {
   Step,
   StepLabel,
   Stepper,
+  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import LoginStep from "./LoginStep";
@@ -25,11 +26,24 @@ const StepReservation = () => {
         m: "5px",
         width: "100%",
         height: "100%",
-        pt: "20px",
         display: "flex",
         flexDirection: "column",
       }}
     >
+      <Typography
+        sx={{
+          minHeight: "40px",
+          backgroundColor: "#30292F",
+          padding: "10px",
+          marginBottom: "20px",
+        }}
+        variant="body1"
+        fontWeight="700"
+        color="white"
+        textAlign="center"
+      >
+        Reservation
+      </Typography>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((element, index) => {
           return (
