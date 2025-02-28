@@ -3,7 +3,7 @@ import MoviesSection from "../MoviesSection";
 import { Box } from "@mui/material";
 import { movieData, Type } from "./constants";
 import dayjs from "dayjs";
-import { getMovies } from "../../api/moviesSectionApi";
+import { getMoviesByDate, getComingMovies } from "../../api/moviesApi";
 
 const MovieSectionManager = () => {
   const [date, setDate] = useState(dayjs());
@@ -13,18 +13,26 @@ const MovieSectionManager = () => {
   useEffect(() => {
     (async () => {
       try {
-        const result = await getMovies(date);
-        const filterScreen = result.filter((movie) => !movie.coming);
-        const filterComing = result.filter((movie) => movie.coming);
-        setMovies(filterScreen);
-        setComingMovies(filterComing);
+        const result = await getMoviesByDate(date);
+        setMovies(result);
       } catch (error) {
         // TODO handle error when fetching data
         console.log(error);
       }
     })();
-    // TODO fetch the movies and divide them into recent movies and coming soon movies
   }, [date]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const result = await getComingMovies();
+        setComingMovies(result);
+      } catch (error) {
+        // TODO handle error when fetching data
+        console.log(error);
+      }
+    })();
+  }, []);
 
   return (
     <Box m="10px">
@@ -35,7 +43,7 @@ const MovieSectionManager = () => {
           sectionType={Type.AVAILABLE}
           movies={movies}
           filterDay={date}
-          minDay={dayjs()}
+          minDay={dayjs("01-01-1990")}
           maxDay={dayjs().add(7, "day")}
           setDate={setDate}
         />

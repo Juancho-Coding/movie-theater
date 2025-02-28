@@ -13,5 +13,10 @@ export interface movieData {
     url: string;
     alt: string;
   };
+  releaseDate: string;
+  duration: number;
+  rating: string;
+  language: string;
+  doubled: boolean;
   coming: boolean;
 }
