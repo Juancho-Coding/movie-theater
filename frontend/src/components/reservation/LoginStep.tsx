@@ -15,7 +15,7 @@ const LoginStep = ({ nextStep }: props) => {
    * @param password
    */
   const loginHandler = async (email: string, password: string) => {
-    const loginResult = await context.login(email, password);
+    const loginResult = await context.login(email, password, false);
     if (loginResult.result === true) {
       nextStep();
       return toast.success(loginResult.message);
@@ -27,7 +27,7 @@ const LoginStep = ({ nextStep }: props) => {
    * Make a dummy login with no information for demostration purposes
    */
   const dummyLoginHandler = async () => {
-    const loginResult = await context.login("dummy@dummy.com", "123456");
+    const loginResult = await context.login("dummy@dummy.com", "123456", true);
     if (loginResult.result === true) {
       nextStep();
       return toast.success(loginResult.message);
@@ -46,12 +46,17 @@ const LoginStep = ({ nextStep }: props) => {
     email: string,
     password: string
   ) => {
-    const signingResult = await makeSignup(name, email, password);
-    if (signingResult.status) {
-      toast.success(signingResult.message);
-      setLogin(true);
-    } else {
-      toast.error(signingResult.message);
+    try {
+      const signingResult = await makeSignup(name, email, password);
+      if (signingResult.status) {
+        toast.success(signingResult.message);
+        setLogin(true);
+      } else {
+        toast.error(signingResult.message);
+      }
+    } catch (error) {
+      const resultError = error as Error;
+      toast.error(resultError.message);
     }
   };
 

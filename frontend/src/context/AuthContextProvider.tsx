@@ -13,9 +13,9 @@ function getDataFromStaorage() {
 const AuthContextProvider = ({ children }: props) => {
   const [userData, setUserData] = useState<userData>(getDataFromStaorage);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, dummy: boolean) => {
     try {
-      const logged = await makeLogin(email, password);
+      const logged = await makeLogin(email, password, dummy);
       setUserData(logged);
       if (logged !== null) {
         localStorage.setItem(AUTH_TOKEN, JSON.stringify(logged));

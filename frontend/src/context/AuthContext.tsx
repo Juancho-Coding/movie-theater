@@ -11,12 +11,13 @@ const authContext: {
   userData: userData;
   login: (
     email: string,
-    password: string
+    password: string,
+    dummy: boolean
   ) => Promise<{ result: boolean; message: string }>;
   logout: () => boolean;
 } = {
   userData: null,
-  login: async (email: string, password: string) =>
+  login: async (email: string, password: string, dummy: boolean) =>
     new Promise<{ result: boolean; message: string }>((resolve, reject) =>
       reject()
     ),
