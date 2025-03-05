@@ -1,10 +1,17 @@
 import { Box, Chip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
-const times = ({ time, link }: props) => {
+const Times = ({ time, link }: props) => {
+  const navigate = useNavigate();
   return (
     <Box>
-      {/* TODO  chane text to link for the movie's details*/}
-      <Chip color="info" label={time} clickable />
+      <Chip
+        color="info"
+        label={time}
+        onClick={() => {
+          navigate("/reservation/" + link);
+        }}
+      />
     </Box>
   );
 };
@@ -14,4 +21,4 @@ interface props {
   link: string;
 }
 
-export default times;
+export default Times;

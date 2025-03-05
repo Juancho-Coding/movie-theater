@@ -11,6 +11,7 @@ export async function getMoviesBySchedule(
   next: NextFunction
 ) {
   type movieData = {
+    id: number;
     title: string;
     description: string | null;
     release_date: Date;
@@ -30,21 +31,21 @@ export async function getMoviesBySchedule(
     validationResults(req);
     // search the db for movies that are scheduled for the date and time
     const movies = await dbQuery(
-      `SELECT m.title, m.description, m.release_date, s.show_date,
+      `SELECT m.id, m.title, m.description, m.release_date, s.show_date,
         ARRAY_AGG(s.show_time ORDER BY s.show_time) as times,
         m.imageurl, m.duration, m.rating, m.language, m.doubled, m.chips
         FROM schedules AS s
         JOIN movies AS m ON m.id = s.movie_id
         WHERE show_date = $1
         AND show_time >= $2
-        GROUP BY m.title, m.description, m.release_date, m.duration,
+        GROUP BY m.id, m.title, m.description, m.release_date, m.duration,
         m.imageurl, m.rating, m.language, m.doubled, m.chips,
         s.show_date`,
       [date, time]
     );
     const formattedMovies = movies.rows.map((movie: movieData) => {
       return {
-        id: movie.title,
+        id: movie.id,
         title: movie.title,
         description: movie.description,
         imageurl: movie.imageurl,

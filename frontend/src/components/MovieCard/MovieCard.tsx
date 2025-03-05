@@ -66,16 +66,24 @@ const MovieCard = ({
           })}
         </Box>
         {/* container for showtimes */}
-        <Box className={classes["times-container"]}>
-          <Typography sx={{ textDecoration: "underline" }}>
-            Select Movie time
-          </Typography>
-          <Box className={classes["times"]}>
-            {times.map((element) => {
-              return <Times key={element} time={element} link={element} />;
-            })}
+        {times.length > 0 && (
+          <Box className={classes["times-container"]}>
+            <Typography sx={{ textDecoration: "underline" }}>
+              Select Movie time
+            </Typography>
+            <Box className={classes["times"]}>
+              {times.map((element) => {
+                return (
+                  <Times
+                    key={element}
+                    time={element}
+                    link={`${id}/${element}`}
+                  />
+                );
+              })}
+            </Box>
           </Box>
-        </Box>
+        )}
       </CardContent>
     </Card>
   );
