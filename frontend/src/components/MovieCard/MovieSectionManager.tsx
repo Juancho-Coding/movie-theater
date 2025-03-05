@@ -6,29 +6,34 @@ import dayjs from "dayjs";
 import { getMoviesByDate, getComingMovies } from "../../api/moviesApi";
 
 const MovieSectionManager = () => {
+  // handles the date for the current movies section
   const [date, setDate] = useState(dayjs());
+  // movies on screen
   const [movies, setMovies] = useState<movieData[] | null>(null);
+  // movies to be released
   const [comingMovies, setComingMovies] = useState<movieData[] | null>(null);
 
+  // fetch movies by date
   useEffect(() => {
     (async () => {
       try {
         const result = await getMoviesByDate(date);
         setMovies(result);
       } catch (error) {
-        // TODO handle error when fetching data
+        setMovies(null);
         console.log(error);
       }
     })();
   }, [date]);
 
+  // fetch movies to be released
   useEffect(() => {
     (async () => {
       try {
         const result = await getComingMovies();
         setComingMovies(result);
       } catch (error) {
-        // TODO handle error when fetching data
+        setComingMovies(null);
         console.log(error);
       }
     })();

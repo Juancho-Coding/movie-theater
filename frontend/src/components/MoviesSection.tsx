@@ -4,6 +4,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import MovieCard from "./MovieCard/MovieCard";
 import { movieData, Type } from "./MovieCard/constants";
 import dayjs from "dayjs";
+import { dinamicImport } from "../utils/utils";
 
 const MoviesSection = ({
   sectionType,
@@ -15,6 +16,8 @@ const MoviesSection = ({
   setDate,
 }: props) => {
   const showFilter = sectionType === Type.AVAILABLE;
+  const moviesExist = movies && movies.length > 0;
+
   return (
     <Paper elevation={2} className={`${classes["content-container"]} `}>
       {/*------ Section title ------*/}
@@ -44,21 +47,42 @@ const MoviesSection = ({
         </Box>
       )}
       {/*------- Shows the list of movies -------*/}
-      <Box className={classes["movies-container"]}>
-        {movies &&
+      <Box
+        className={`${
+          moviesExist
+            ? classes["movies-container"]
+            : classes["no-movies-container"]
+        }`}
+      >
+        {moviesExist &&
           movies.map((movie) => (
             <MovieCard
               key={movie.id}
               id={movie.id}
               title={movie.title}
               description={movie.description}
-              chips={movie.chips}
-              times={movie.times}
+              chips={[
+                movie.rating,
+                `Released: ${dayjs(movie.releaseDate).format("MMM YYYY")}`,
+                movie.language,
+                movie.doubled ? "Doubled: Yes" : "Doubled: No",
+                ...movie.chips,
+              ]}
+              times={movie.times.map((time) => {
+                const arr = time.split(":");
+                return `${arr[0]}:${arr[1]}`;
+              })}
               imageUrl={movie.imageUrl}
             />
           ))}
-        {/* TODO show a component with empty movies */}
-        {!movies && <Box>No movies available</Box>}
+        {!moviesExist && (
+          <Box className={classes["no-movies"]}>
+            <img
+              src={dinamicImport("no movies.webp")}
+              alt="no movies available"
+            />
+          </Box>
+        )}
       </Box>
     </Paper>
   );

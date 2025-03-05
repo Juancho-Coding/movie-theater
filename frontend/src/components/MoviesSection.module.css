@@ -19,6 +19,26 @@
   column-gap: 20px;
 }
 
+.no-movies-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  max-height: 300px;
+}
+
+.no-movies {
+  margin-top: 20px;
+  overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+}
+
+.no-movies > img {
+  height: 100%;
+}
+
 @media (max-width: 500px) {
   .movies-container {
     grid-template-columns: repeat(1, 1fr);
