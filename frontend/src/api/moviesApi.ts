@@ -54,6 +54,10 @@ export const getMoviesByDate = async (
   return movies;
 };
 
+/**
+ * get the movies that are marked as coming
+ * @returns movies list
+ */
 export const getComingMovies = async (): Promise<movieData[]> => {
   const response = await fetch(`${BASEURL}/movies/comingmovies`);
   if (!response.ok) {
@@ -92,4 +96,51 @@ export const getComingMovies = async (): Promise<movieData[]> => {
     };
   });
   return movies;
+};
+
+/**
+ * get movie details according with its id
+ * @param id identifier of the movie
+ * @returns movie details
+ */
+export const getMoviesById = async (id: number) => {
+  const url = new URL(`${BASEURL}/movies/moviebyid`);
+  url.searchParams.set("id", id.toString());
+  const response = await fetch(url.toString());
+  if (!response.ok) {
+    const cause = await response.json();
+    throw new Error(cause.message);
+  }
+  const data: {
+    id: string;
+    title: string;
+    description: string;
+    imageurl: string;
+    release_date: string;
+    show_date: string;
+    duration: number;
+    times: string[];
+    rating: string;
+    language: string;
+    doubled: boolean;
+    chips: string[];
+  } = await response.json();
+  const movie: movieData = {
+    id: data.id,
+    title: data.title,
+    description: data.description,
+    chips: data.chips,
+    times: data.times,
+    imageUrl: {
+      url: data.imageurl,
+      alt: data.title + " poster",
+    },
+    releaseDate: data.release_date,
+    duration: data.duration,
+    rating: data.rating,
+    language: data.language,
+    doubled: data.doubled,
+    coming: false,
+  };
+  return movie;
 };

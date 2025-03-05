@@ -8,13 +8,20 @@ import {
   Stepper,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import LoginStep from "./LoginStep";
+
+import AuthContext from "../../context/AuthContext";
 
 const steps = ["Login/Create Account", "Select Seats", "Reserve and pay"];
 
 const StepReservation = () => {
   const [activeStep, setActiveStep] = useState(0);
+  const { userData } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (userData !== null) setActiveStep(1);
+  }, [userData]);
 
   const nextStep = () => {
     setActiveStep((prev) => (prev === 2 ? 2 : prev + 1));
