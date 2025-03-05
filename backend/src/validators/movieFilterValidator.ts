@@ -37,3 +37,10 @@ export const movieFilterValidator = [
     })
     .withMessage("Time must be in the format HH:MM"),
 ];
+
+/**
+ * Validates the movie id is present in the query
+ */
+export const movieIdValidator = [
+  query("id").exists().isNumeric().withMessage("Provide a valid movie id"),
+];
