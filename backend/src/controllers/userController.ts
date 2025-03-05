@@ -34,7 +34,8 @@ export async function loginUser(
       const userid = randomUUID();
       const jwt = jsonwebtoken.sign(
         { userid: userid },
-        process.env.JWT_SECRET!
+        process.env.JWT_SECRET!,
+        { expiresIn: "1h" }
       );
       res.status(200).json({
         name: "Average Joe",
