@@ -44,11 +44,16 @@ export const authValidator = (
     if (authHeader) {
       const token = authHeader.split(" ")[1];
       const result = <jwt.JwtPayload>jwt.verify(token, process.env.JWT_SECRET!);
-      res.locals.email = result["email"];
-      next();
+      const email = result["email"];
+      const userid = result["userid"];
+      // if some of the values is missing inside the token
+      if (email === undefined || userid === undefined) throw new Error();
+      res.locals.email = email;
+      res.locals.userId = userid;
+      return next();
     }
-    return res.status(403).json({ error: "Access invalid or expired" });
+    res.status(401).json({ error: "Access invalid or expired" });
   } catch (error) {
-    return res.status(403).json({ error: "Access invalid or expired" });
+    res.status(401).json({ error: "Access invalid or expired" });
   }
 };

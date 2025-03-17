@@ -33,7 +33,7 @@ export async function loginUser(
     if (dummy) {
       const userid = randomUUID();
       const jwt = jsonwebtoken.sign(
-        { userid: userid },
+        { userid: userid, email: "pedroperez@gmail.com" },
         process.env.JWT_SECRET!,
         { expiresIn: "1h" }
       );
@@ -62,7 +62,7 @@ export async function loginUser(
     }
     // create a jwt token and send it back to the user
     const jwt = jsonwebtoken.sign(
-      { userid: user.userid },
+      { userid: user.userid, email: email },
       process.env.JWT_SECRET!
     );
     res
