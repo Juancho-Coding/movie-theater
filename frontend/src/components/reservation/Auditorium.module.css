@@ -1,0 +1,55 @@
+.auditorium {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  overflow: auto;
+}
+
+.screen {
+  width: 80%;
+  justify-content: center;
+  display: flex;
+  margin: auto;
+  background-color: gray;
+}
+
+.seats-container {
+  flex-shrink: 0;
+  margin: 10px;
+  display: flex;
+  flex-direction: column;
+  row-gap: 5px;
+}
+
+.row-container {
+  display: flex;
+  flex-direction: row;
+  column-gap: 20px;
+}
+
+.seats {
+  height: 40px;
+  max-width: 40px;
+  min-width: 20px;
+  padding: 5px;
+  color: white;
+  border-radius: 15%;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.seat-available {
+  cursor: pointer;
+  background-color: #456bc4;
+}
+
+.seat-occupied {
+  cursor: not-allowed;
+  background-color: #919191;
+}
+
+.seat-selected {
+  background-color: #d16f3b;
+  cursor: not-allowed;
+}

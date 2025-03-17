@@ -1,0 +1,18 @@
+.reservation-container {
+  max-width: 90%;
+}
+
+.reservation-title {
+  min-height: 40px;
+  background-color: #3099cc;
+  padding: 10px;
+  margin-bottom: 20px;
+}
+
+.seat-selection {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+}

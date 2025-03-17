@@ -9,13 +9,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
-import LoginStep from "./LoginStep";
 
+import classes from "./Reservation.module.css";
+import LoginStep from "./LoginStep";
 import AuthContext from "../../context/AuthContext";
+import SeatReservationStep from "./SeatReservationStep";
 
 const steps = ["Login/Create Account", "Select Seats", "Reserve and pay"];
 
-const StepReservation = () => {
+const Reservation = () => {
   const [activeStep, setActiveStep] = useState(0);
   const { userData } = useContext(AuthContext);
 
@@ -28,15 +30,7 @@ const StepReservation = () => {
   };
 
   return (
-    <Card
-      sx={{
-        m: "5px",
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <Card className={classes["card_container"]}>
       <Typography
         sx={{
           minHeight: "40px",
@@ -60,33 +54,29 @@ const StepReservation = () => {
           );
         })}
       </Stepper>
+      {/* -----------  First step: login or signup ------------- */}
       <Fade
         in={activeStep == 0}
         appear
         unmountOnExit
         timeout={{ appear: 100, enter: 500, exit: 0 }}
       >
-        <Box
-          sx={{
-            paddingTop: "10%",
-            height: "100%",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "flex-start",
-            alignItems: "center",
-          }}
-        >
+        <Box className={classes["step"]}>
           <LoginStep nextStep={nextStep}></LoginStep>
         </Box>
       </Fade>
+      {/* -------- second step: number of tickets and seats ---------- */}
       <Fade
         in={activeStep == 1}
         appear
         unmountOnExit
         timeout={{ appear: 100, enter: 500, exit: 0 }}
       >
-        <Box sx={{ border: "1px solid red" }}>step2</Box>
+        <Box className={classes["step"]}>
+          <SeatReservationStep></SeatReservationStep>
+        </Box>
       </Fade>
+      {/* -------- third step: paying and finalizing ------------ */}
       <Fade
         in={activeStep == 2}
         appear
@@ -112,4 +102,4 @@ const StepReservation = () => {
   );
 };
 
-export default StepReservation;
+export default Reservation;
