@@ -13,3 +13,5 @@
 backend/dist/
 backend/build/
 readme.md
+.vscode
+documents/*
