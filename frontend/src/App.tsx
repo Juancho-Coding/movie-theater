@@ -12,7 +12,10 @@ import { Toaster } from "react-hot-toast";
 const router = createBrowserRouter([
   // main page, shows the content visible to public
   { path: "/", element: <MainMovies /> },
-  { path: "/reservation/:movieId/:timeId", element: <MovieReservation /> },
+  {
+    path: "/reservation/:movieId/:timeId/:date",
+    element: <MovieReservation />,
+  },
   // logn page, for admin only
   { path: "/login", element: <>hello world</> },
   // admin page, allow changes and visualization of info

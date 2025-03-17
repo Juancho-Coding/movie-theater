@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 import MovieDetails from "./MovieDetails";
-import StepReservation from "./StepReservation";
+import Reservation from "./Reservation";
 import classes from "./ReservationManager.module.css";
 import { getMoviesById } from "../../api/moviesApi";
 import { movieData } from "../MovieCard/constants";
@@ -16,13 +16,14 @@ const ReservationManager = () => {
   const navigate = useNavigate();
   const movieId = params["movieId"];
   const timeId = params["timeId"];
+  const date = params["date"];
 
   useEffect(() => {
-    if (movieId === undefined || timeId === undefined) {
+    if (movieId === undefined || timeId === undefined || date === undefined) {
       // TODO Navigate to a page showing an error message instead of main page
       navigate("/");
     }
-  }, [movieId, timeId, navigate]);
+  }, [movieId, timeId, date, navigate]);
 
   useEffect(() => {
     (async () => {
@@ -65,8 +66,8 @@ const ReservationManager = () => {
         />
       </Box>
       {/* right section shows the steps to reserve */}
-      <Box flexGrow="1">
-        <StepReservation />
+      <Box className={classes["reserve-container"]}>
+        <Reservation />
       </Box>
     </Box>
   );
