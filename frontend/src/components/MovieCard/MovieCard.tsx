@@ -19,6 +19,7 @@ const MovieCard = ({
   chips = [],
   imageUrl,
   times = [],
+  date,
 }: props) => {
   const [hovered, setHovered] = useState(false);
   // flag that indeicates when the screen is less than 500px
@@ -77,7 +78,7 @@ const MovieCard = ({
                   <Times
                     key={element}
                     time={element}
-                    link={`${id}/${element}`}
+                    link={`${id}/${element}/${date}`}
                   />
                 );
               })}
@@ -96,6 +97,7 @@ interface props {
   imageUrl: { url: string; alt: string };
   chips: string[];
   times: string[];
+  date: string;
 }
 
 export default MovieCard;

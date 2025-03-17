@@ -73,6 +73,7 @@ const MoviesSection = ({
                 return `${arr[0]}:${arr[1]}`;
               })}
               imageUrl={movie.imageUrl}
+              date={filterDay ? filterDay.format("YYYYMMDD") : ""}
             />
           ))}
         {!moviesExist && (
