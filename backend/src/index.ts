@@ -1,5 +1,7 @@
 import { initializePool, testConnection } from "./db/postgres";
+import http from "http";
 import { startServer } from "./server";
+import { socketioServer } from "./socketServer";
 import env from "dotenv";
 
 (async () => {
@@ -11,8 +13,10 @@ import env from "dotenv";
     // test the connection with db
     await testConnection();
     const app = startServer();
+    const server = http.createServer(app);
+    const io = socketioServer(server);
     const serverPort = process.env.PORT || 9001;
-    app.listen(serverPort, () => {
+    server.listen(serverPort, () => {
       // TODO implement better logging with std.out
       console.log("server started on port " + serverPort);
     });
