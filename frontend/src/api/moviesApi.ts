@@ -16,7 +16,7 @@ export const getMoviesByDate = async (
   const response = await fetch(url.toString());
   if (!response.ok) {
     const cause = await response.json();
-    throw new Error(cause.message);
+    throw new Error(cause.msg);
   }
   const data: {
     id: string;
@@ -62,7 +62,7 @@ export const getComingMovies = async (): Promise<movieData[]> => {
   const response = await fetch(`${BASEURL}/movies/comingmovies`);
   if (!response.ok) {
     const cause = await response.json();
-    throw new Error(cause.message);
+    throw new Error(cause.msg);
   }
   const data: {
     id: string;
@@ -109,7 +109,7 @@ export const getMoviesById = async (id: number) => {
   const response = await fetch(url.toString());
   if (!response.ok) {
     const cause = await response.json();
-    throw new Error(cause.message);
+    throw new Error(cause.msg);
   }
   const data: {
     id: string;

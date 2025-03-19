@@ -15,7 +15,7 @@ export async function makeLogin(
   });
   if (!response.ok) {
     const cause = await response.json();
-    throw new Error(cause.message);
+    throw new Error(cause.msg);
   }
   const data: userData = await response.json();
   return data;
@@ -35,8 +35,8 @@ export async function makeSignup(
   });
   if (!response.ok) {
     const cause = await response.json();
-    throw new Error(cause.message);
+    throw new Error(cause.msg);
   }
   const result = await response.json();
-  return { status: true, message: result.message };
+  return { status: true, message: result.msg };
 }
