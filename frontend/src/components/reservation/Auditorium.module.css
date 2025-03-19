@@ -51,5 +51,5 @@
 
 .seat-selected {
   background-color: #d16f3b;
-  cursor: not-allowed;
+  cursor: pointer;
 }

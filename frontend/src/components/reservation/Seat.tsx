@@ -11,7 +11,7 @@ const Seat = ({ row, column, status, onSelect }: props) => {
       : "seat-selected";
 
   const clickHandler = () => {
-    if (status !== 0) return;
+    if (status === 1) return;
     onSelect(row, column, status);
   };
 
