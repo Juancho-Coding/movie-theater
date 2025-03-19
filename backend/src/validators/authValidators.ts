@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { body } from "express-validator";
 import jwt from "jsonwebtoken";
+import { dbQuery } from "../db/postgres";
 
 /**
  * Validates the login request
@@ -55,5 +56,25 @@ export const authValidator = (
     res.status(401).json({ error: "Access invalid or expired" });
   } catch (error) {
     res.status(401).json({ error: "Access invalid or expired" });
+  }
+};
+
+/**
+ * Validates that the user exits on the database
+ */
+export const userExistValidator = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const userId = res.locals.userId;
+  try {
+    const result = await dbQuery("SELECT * from users WHERE userId = $1", [
+      userId,
+    ]);
+    if (result.rows.length !== 0) return next();
+    res.status(404).json({ error: "User not found" });
+  } catch (error) {
+    res.status(404).json({ error: "User not Found" });
   }
 };
