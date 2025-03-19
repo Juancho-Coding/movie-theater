@@ -13,11 +13,14 @@ import AuthContext from "../../context/AuthContext";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import { useContext, useEffect, useState } from "react";
-import { getResevationSeats } from "../../api/reservationApi";
+import {
+  getResevationSeats,
+  reserveOneSeat,
+  unreserveOneSeat,
+} from "../../api/reservationApi";
 import { useNavigate, useParams } from "react-router-dom";
 import { ApiError } from "../../api/apiHelper";
 import toast from "react-hot-toast";
-import Seat from "./Seat";
 import Auditorium from "./Auditorium";
 
 // TODO change for a configuration parameteralld by an api
@@ -42,6 +45,10 @@ const SeatReservationStep = () => {
   );
   // stores the layout ofthe auditorium
   const [layout, setLayout] = useState<number[][]>([]);
+  // stores the id of the current session
+  const [session, setSession] = useState(-1);
+  // stores the id of the current schedule
+  const [schedule, setSchedule] = useState("");
 
   // Validates the movies parameters exists before sending a reservation
   useEffect(() => {
@@ -61,12 +68,26 @@ const SeatReservationStep = () => {
         numberseats
       );
       setSelSeats(result.seats);
-      setLayout(result.layout);
+      setNumberSeats(result.seats.length);
+      const firstLayout = result.layout.map((row) => [...row]);
+      result.seats.forEach((value) => {
+        firstLayout[value.row - 1][value.column - 1] = 2;
+      });
+      setLayout(firstLayout);
+      setSession(result.session);
+      setSchedule(result.schedule);
       setStep(2);
+      if (result.seats.length < numberseats) {
+        toast.error(
+          `You have already reserved some tickets, only available ${result.seats.length}`
+        );
+      }
     } catch (error) {
       console.log(error);
-      if (error instanceof ApiError) logout();
-      //TODO f api error because of token expiration, must logout and reload
+      if (error instanceof ApiError) {
+        logout();
+        setStep(1);
+      }
       toast.error(String(error));
     }
   };
@@ -81,8 +102,67 @@ const SeatReservationStep = () => {
     });
   }
 
-  function selectedSeat(row: number, column: number, status: number) {
-    // TODO call api to reserve/unsereve a seat
+  async function selectedSeatHandler(
+    row: number,
+    column: number,
+    status: number
+  ) {
+    // status=0: available, 1:occupied, 2:pending
+    try {
+      if (status === 2) {
+        // selected seat was reserved previously, proceed to delete reservation
+        const result = await unreserveOneSeat(
+          userData?.token,
+          session,
+          row + 1,
+          column + 1
+        );
+        setLayout((prev) => {
+          const newLayout = prev.map((row) => [...row]);
+          newLayout[result.deletedRow - 1][result.deletedCol - 1] = 0;
+          return newLayout;
+        });
+        setSelSeats((prev) => {
+          const newData = [...prev];
+          return newData.filter(
+            (seat) =>
+              seat.row !== result.deletedRow ||
+              seat.column !== result.deletedCol
+          );
+        });
+        return;
+      }
+      if (status === 0) {
+        // selected seat will be added, proceed to create reservation
+        // only if there is less than the desired seats selected
+        if (selSeats.length >= numberseats) return;
+        const result = await reserveOneSeat(
+          userData?.token,
+          session,
+          row + 1,
+          column + 1,
+          schedule
+        );
+        setLayout((prev) => {
+          const newLayout = prev.map((row) => [...row]);
+          newLayout[result.row - 1][result.col - 1] = 2;
+          return newLayout;
+        });
+        setSelSeats((prev) => {
+          const newSeats = [...prev];
+          newSeats.push({ row: result.row, column: result.col });
+          return newSeats;
+        });
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+      if (error instanceof ApiError) {
+        logout();
+        setStep(1);
+      }
+      toast.error(String(error));
+    }
   }
 
   return (
@@ -143,7 +223,7 @@ const SeatReservationStep = () => {
       <Divider sx={{ mt: "10px", mb: "10px" }} variant="fullWidth" />
       {/* ------- auditoriu seats selection -------- */}
       <Box m="10px">
-        <Auditorium layout={layout} onSelectSeat={selectedSeat} />
+        <Auditorium layout={layout} onSelectSeat={selectedSeatHandler} />
       </Box>
     </Paper>
   );
