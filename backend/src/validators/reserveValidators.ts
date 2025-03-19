@@ -32,3 +32,9 @@ export const reserveValidator = [
     .isNumeric({ no_symbols: true })
     .withMessage("Seats format is invalid"),
 ];
+
+export const reserveSeatValidator = [
+  body("session").exists().isNumeric().withMessage("The session id is missing"),
+  body("row").exists().isNumeric().withMessage("The row id is missing"),
+  body("column").exists().isNumeric().withMessage("The column id is missing"),
+];
