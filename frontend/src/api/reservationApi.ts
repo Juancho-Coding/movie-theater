@@ -4,6 +4,8 @@ type ReservationRes = {
   auditorium: string[];
   seats: { row: number; column: number }[];
   status: boolean;
+  session: number;
+  schedule: string;
 };
 
 export async function getResevationSeats(
@@ -31,16 +33,79 @@ export async function getResevationSeats(
   if (!response.ok) {
     const cause = await response.json();
     //token expired or failed
-    if (response.status === 401) throw new ApiError(401, cause.message);
-    throw new Error(cause.message);
+    if (response.status === 401) throw new ApiError(401, cause.msg);
+    throw new Error(cause.msg);
   }
   const data: ReservationRes = await response.json();
   // transforms layout into boolean array
   const layout = data.auditorium.map((row) => {
     return row.split("").map((x) => parseInt(x));
   });
-  data.seats.forEach((seat) => {
-    layout[seat.row - 1][seat.column - 1] = 2;
+  return {
+    seats: data.seats,
+    status: data.status,
+    layout,
+    session: data.session,
+    schedule: data.schedule,
+  };
+}
+
+export async function reserveOneSeat(
+  token: string | undefined,
+  session: number,
+  row: number,
+  column: number,
+  schedule: string
+) {
+  // validates token
+  if (token === undefined) throw new Error("Authentication expired");
+  const response = await fetch(`${BASEURL}/reserve/reserveSingleSeat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({
+      session: session,
+      row: row,
+      column: column,
+      schedule,
+    }),
   });
-  return { seats: data.seats, status: data.status, layout };
+  if (!response.ok) {
+    const cause = await response.json();
+    //token expired or failed
+    if (response.status === 401) throw new ApiError(401, cause.msg);
+    throw new Error(cause.msg);
+  }
+  const data: { msg: string; row: number; col: number } = await response.json();
+  return data;
+}
+
+export async function unreserveOneSeat(
+  token: string | undefined,
+  session: number,
+  row: number,
+  column: number
+) {
+  // validates token
+  if (token === undefined) throw new Error("Authentication expired");
+  const response = await fetch(
+    `${BASEURL}/reserve/removeReservedSeat/${session}/${row}/${column}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (!response.ok) {
+    const cause = await response.json();
+    //token expired or failed
+    if (response.status === 401) throw new ApiError(401, cause.msg);
+    throw new Error(cause.msg);
+  }
+  const data: { deletedRow: number; deletedCol: number } =
+    await response.json();
+  return data;
 }
