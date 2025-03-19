@@ -20,7 +20,7 @@ export function validationResults(req: Request): void {
 export function validationResponse(error: any, res: Response) {
   if (error instanceof ValError) {
     const validationError = <ValError>error;
-    res.status(validationError.code).json({ message: validationError.message });
+    res.status(validationError.code).json({ msg: validationError.message });
     return true;
   }
   return false;

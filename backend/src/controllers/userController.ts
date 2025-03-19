@@ -52,18 +52,19 @@ export async function loginUser(
     );
     if (result.rows.length === 0) {
       // no user found with the email and password
-      res.status(404).json({ message: "The email or password is invalid" });
+      res.status(404).json({ msg: "The email or password is invalid" });
       return;
     }
     const user = result.rows[0] as userData;
     if (!(await bcrypt.compare(password, user.password))) {
-      res.status(404).json({ message: "The email or password is invalid" });
+      res.status(404).json({ msg: "The email or password is invalid" });
       return;
     }
     // create a jwt token and send it back to the user
     const jwt = jsonwebtoken.sign(
       { userid: user.userid, email: email },
-      process.env.JWT_SECRET!
+      process.env.JWT_SECRET!,
+      { expiresIn: "1h" }
     );
     res
       .status(200)
@@ -71,7 +72,7 @@ export async function loginUser(
   } catch (error) {
     // checks if the error was a validation error
     if (validationResponse(error, res)) return;
-    res.status(500).json({ message: "Internal error server" });
+    res.status(500).json({ msg: "Internal error server" });
   }
 }
 
@@ -93,7 +94,7 @@ export async function signupUser(
       email,
     ]);
     if (existingUser.rows.length > 0) {
-      res.status(400).json({ message: "User already exists" });
+      res.status(400).json({ msg: "User already exists" });
       return;
     }
     // hash password and generate a new user id
@@ -104,10 +105,10 @@ export async function signupUser(
       `INSERT INTO users (name, email, password, userid) VALUES ($1, $2, $3, $4)`,
       [name, email, hashedPassword, newUserId]
     );
-    res.status(200).json({ status: true, message: `${name} was created` });
+    res.status(200).json({ status: true, msg: `${name} was created` });
   } catch (error) {
     // checks if the error was a validation error
     if (validationResponse(error, res)) return;
-    res.status(500).json({ message: "Internal error server" });
+    res.status(500).json({ msg: "Internal error server" });
   }
 }
