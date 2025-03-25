@@ -13,7 +13,7 @@ const Auditorium = ({ layout, onSelectSeat }: props) => {
       <Box className={classes["seats-container"]}>
         {layout.map((row, indexR) => {
           return (
-            <Box className={classes["row-container"]}>
+            <Box key={indexR} className={classes["row-container"]}>
               {row.map((value, indexC) => {
                 return (
                   <Seat
@@ -28,6 +28,14 @@ const Auditorium = ({ layout, onSelectSeat }: props) => {
             </Box>
           );
         })}
+      </Box>
+      <Box className={classes.legend}>
+        <Seat row={0} column={0} status={0} onSelect={() => {}} />
+        <Typography>Available</Typography>
+        <Seat row={0} column={0} status={1} onSelect={() => {}} />
+        <Typography>Occupied</Typography>
+        <Seat row={0} column={0} status={2} onSelect={() => {}} />
+        <Typography>Selected</Typography>
       </Box>
     </Box>
   );

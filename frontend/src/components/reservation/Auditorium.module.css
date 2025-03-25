@@ -53,3 +53,9 @@
   background-color: #d16f3b;
   cursor: pointer;
 }
+
+.legend {
+  display: flex;
+  column-gap: 10px;
+  align-items: center;
+}
