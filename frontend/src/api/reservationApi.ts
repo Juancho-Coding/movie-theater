@@ -13,7 +13,8 @@ export async function getResevationSeats(
   movieId: number,
   date: string,
   time: string,
-  seats: number
+  seats: number,
+  sessionId: string
 ) {
   // validates token
   if (token === undefined) throw new Error("Authentication expired");
@@ -28,6 +29,7 @@ export async function getResevationSeats(
       date: date,
       time: time,
       seats: seats,
+      sessionId: sessionId,
     }),
   });
   if (!response.ok) {
