@@ -53,9 +53,9 @@ export const authValidator = (
       res.locals.userId = userid;
       return next();
     }
-    res.status(401).json({ error: "Access invalid or expired" });
+    res.status(401).json({ msg: "Access invalid or expired" });
   } catch (error) {
-    res.status(401).json({ error: "Access invalid or expired" });
+    res.status(401).json({ msg: "Access invalid or expired" });
   }
 };
 
