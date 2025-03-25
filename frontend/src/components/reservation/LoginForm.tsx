@@ -31,8 +31,6 @@ const LoginForm = ({ login, dummyLogin, dismiss }: props) => {
 
   const submitHandler = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(email);
-    console.log(password);
     login(email, password);
   };
 

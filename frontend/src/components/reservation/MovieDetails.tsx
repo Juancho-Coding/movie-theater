@@ -13,7 +13,7 @@ const MovieDetails = ({ title, description, chips, imageUrl }: props) => {
       <Box className={classes["image-container"]}>
         <img
           className={classes["image"]}
-          src={imageUrl.url}
+          src={imageUrl.url.length === 0 ? undefined : imageUrl.url}
           alt={imageUrl.alt}
         />
       </Box>
