@@ -6,6 +6,7 @@ import {
 import { dbQuery, dbQueryWithClient } from "../db/postgres";
 import { randomInt, randomUUID } from "crypto";
 import dayjs from "dayjs";
+import { sioServer } from "../socketServer";
 
 export async function generateReservation(
   req: Request,
@@ -17,14 +18,18 @@ export async function generateReservation(
   const movieId = req.body.movie;
   let seats = req.body.seats ? parseInt(req.body.seats) : 0;
   const userId = res.locals.userId!;
+  const socketClientId: string = req.body.sessionId;
   try {
     //checks for validation error before continuing
     validationResults(req);
     /*   ---------- start section: validates reservation limit -------------------- */
     let validation = await dbQuery(
-      `SELECT count(*)::int FROM reservations
-      WHERE user_id = $1`,
-      [userId]
+      `SELECT count(r.id)::int FROM reservations AS r
+      JOIN schedules AS s ON s.id = r.schedule_id
+      WHERE s.movie_id = $1
+      AND s.show_time = $2
+      AND s.show_date = $3`,
+      [movieId, time, date]
     );
     const totalReserved = (validation.rows[0] as { count: number }).count;
     if (totalReserved >= 10) {
@@ -123,7 +128,7 @@ export async function generateReservation(
       formattedSeats.push(
         uniqueId,
         schedule.scheduleId,
-        res.locals.userId!,
+        userId,
         "pending",
         createdAt,
         expiresAt,
@@ -163,8 +168,18 @@ export async function generateReservation(
       schedule: schedule.scheduleId,
     };
     res.status(200).json(response);
+    if (sioServer === null) return;
+    const socket = sioServer.sockets.sockets.get(socketClientId);
+    if (socket === undefined) return;
+    socket.join(schedule.scheduleId);
+    console.log(`Socket ${socketClientId} joined room: ${schedule.scheduleId}`);
+    for (let seatIndex = 0; seatIndex < foundSeats.length; seatIndex++) {
+      const seat = foundSeats[seatIndex];
+      sioServer
+        .to(schedule.scheduleId ? schedule.scheduleId : "")
+        .emit("event", { status: true, row: seat.row, col: seat.column });
+    }
     /*   ----- end section: formatting and sending response --------- */
-    return;
   } catch (error) {
     console.log(error);
     // checks if the error was a validation error
@@ -310,12 +325,19 @@ export async function reserveSeat(
       seat_row: number;
       seat_col: number;
     };
+    await client.query("commit");
     res.status(200).json({
       msg: "New seat reserved",
       row: insertedSeat.seat_row,
       col: insertedSeat.seat_col,
     });
-    await client.query("commit");
+    if (sioServer === null) return;
+    sioServer.to(schedule_id ? schedule_id : "").emit("event", {
+      status: true,
+      row: insertedSeat.seat_row,
+      col: insertedSeat.seat_col,
+    });
+
     /* ------- start section: reserve new seat ---------  */
   } catch (error) {
     if (client !== null) await client.query("rollback");
@@ -345,7 +367,7 @@ export async function deleteSeat(
     client.query("START TRANSACTION"); // start transaction
     /* ------- start section: validate reservation -----  */
     let result = await client.query(
-      `SELECT * FROM reservations
+      `SELECT schedule_id FROM reservations
       WHERE "session" = $1
       AND user_id = $2
       AND seat_row = $3
@@ -360,6 +382,7 @@ export async function deleteSeat(
       });
       return;
     }
+    const schedule_id = (result.rows[0] as { schedule_id: string }).schedule_id;
     /* ------- end section: validate reservation -----  */
     /* ------- start section: delete reservation ---------  */
     let result2 = await client.query(
@@ -370,11 +393,17 @@ export async function deleteSeat(
       AND seat_col = $4`,
       [session, userId, row, column]
     );
+    await client.query("commit");
     res.status(200).json({
       deletedRow: row,
       deletedCol: column,
     });
-    await client.query("commit");
+    if (sioServer === null) return;
+    sioServer.to(schedule_id ? schedule_id : "").emit("event", {
+      status: false,
+      row: row,
+      col: column,
+    });
     /* ------- start section: reserve new seat ---------  */
   } catch (error) {
     if (client !== null) await client.query("rollback");
