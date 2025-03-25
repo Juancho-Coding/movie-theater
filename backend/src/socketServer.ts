@@ -1,6 +1,8 @@
 import { Server } from "socket.io";
 import http from "http";
 
+export let sioServer: Server | null = null;
+
 export function socketioServer(server: http.Server) {
   const port = parseInt(process.env.SOCKET_PORT || "9005");
   // TODO implement options to modify the socketio behaviour
@@ -13,5 +15,9 @@ export function socketioServer(server: http.Server) {
   io.on("disconnect", (socket) => {
     console.log(`Client disconnected: ${socket.id}`);
   });
-  return io;
+  setIOServer(io);
+}
+
+function setIOServer(io: Server) {
+  sioServer = io;
 }

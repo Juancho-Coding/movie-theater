@@ -14,8 +14,8 @@ import env from "dotenv";
     await testConnection();
     const app = startServer();
     const server = http.createServer(app);
-    const io = socketioServer(server);
-    const serverPort = process.env.PORT || 9001;
+    socketioServer(server);
+    const serverPort = process.env.SERVER_PORT || 9000;
     server.listen(serverPort, () => {
       // TODO implement better logging with std.out
       console.log("server started on port " + serverPort);
