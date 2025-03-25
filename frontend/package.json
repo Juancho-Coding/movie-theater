@@ -16,12 +16,14 @@
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.3",
     "@mui/x-date-pickers": "^7.26.0",
+    "@types/node": "^22.13.13",
     "dayjs": "^1.11.13",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
     "react-router": "6.26",
-    "react-router-dom": "6.26"
+    "react-router-dom": "6.26",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
