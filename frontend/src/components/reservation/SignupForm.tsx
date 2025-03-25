@@ -57,8 +57,6 @@ const SignupForm = ({ signup, dismiss }: props) => {
     password: string,
     password2: string
   ) => {
-    console.log(passwordValidator(password));
-
     if (passwordValidator(password)) {
       setErrorPass1({ error: false, msg: "" });
     } else {
