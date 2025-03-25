@@ -7,26 +7,31 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import classes from "./SeatReservationStep.module.css";
-
-import AuthContext from "../../context/AuthContext";
-import RemoveIcon from "@mui/icons-material/Remove";
-import AddIcon from "@mui/icons-material/Add";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   getResevationSeats,
   reserveOneSeat,
   unreserveOneSeat,
 } from "../../api/reservationApi";
-import { useNavigate, useParams } from "react-router-dom";
+
+import classes from "./SeatReservationStep.module.css";
+import AuthContext from "../../context/AuthContext";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
 import { ApiError } from "../../api/apiHelper";
-import toast from "react-hot-toast";
 import Auditorium from "./Auditorium";
+import { useSocket } from "../../hooks/useSocket";
+import { TimeRemaining } from "./TimeRemaining";
 
 // TODO change for a configuration parameteralld by an api
 const MAX_SEATS = 5;
 
-const SeatReservationStep = () => {
+// TODO change for a configuration parameteralld by an api
+const MAX_SECONDS = 300;
+
+const SeatReservationStep = ({ onLogout }: props) => {
   const params = useParams();
   const navigate = useNavigate();
   // when this component is loaded the page verification is already done so
@@ -37,7 +42,7 @@ const SeatReservationStep = () => {
   const { userData, logout } = useContext(AuthContext);
   // stores the number of seats desired
   const [numberseats, setNumberSeats] = useState(1);
-  // store the steps to modify UI
+  // store the step number to modify UI
   const [step, setStep] = useState(1);
   // stores the selected seats
   const [selSeats, setSelSeats] = useState<{ row: number; column: number }[]>(
@@ -49,6 +54,12 @@ const SeatReservationStep = () => {
   const [session, setSession] = useState(-1);
   // stores the id of the current schedule
   const [schedule, setSchedule] = useState("");
+  // stores the flag to start receiving messages
+  const [flag, setFlag] = useState(false);
+  // hook to interact with the socket and the messages
+  const [isConnected, socketId, getMessages] = useSocket();
+  // flag confirmation of checkout
+  const [confirmation, setConfirmation] = useState(false);
 
   // Validates the movies parameters exists before sending a reservation
   useEffect(() => {
@@ -58,6 +69,22 @@ const SeatReservationStep = () => {
     }
   }, [movieId, timeId, date, navigate]);
 
+  // updates the layout when a message from socketio is received
+  useEffect(() => {
+    if (!flag) return;
+    const messages = getMessages();
+    if (messages.length === 0) return;
+    setLayout((prev) => {
+      const newLayout = prev.map((row) => [...row]);
+      updateLayout(newLayout, selSeats, messages);
+      return newLayout;
+    });
+  }, [flag, selSeats, getMessages]);
+
+  // reset the checkout button when seats are selected
+  useEffect(() => setConfirmation(false), [selSeats]);
+
+  // try to make the initial reservation
   const getSeatsHandler = async () => {
     try {
       const result = await getResevationSeats(
@@ -65,18 +92,25 @@ const SeatReservationStep = () => {
         parseInt(movieId),
         date,
         timeId,
-        numberseats
+        numberseats,
+        isConnected ? socketId! : ""
       );
+      // update list of selected seats
       setSelSeats(result.seats);
+      // depending on the number of seats available updates the maximum number of seats
       setNumberSeats(result.seats.length);
+      // updates the layout
       const firstLayout = result.layout.map((row) => [...row]);
-      result.seats.forEach((value) => {
-        firstLayout[value.row - 1][value.column - 1] = 2;
-      });
+      updateLayout(firstLayout, result.seats);
       setLayout(firstLayout);
+      // strores the current session id
       setSession(result.session);
+      // stores the schedule id
       setSchedule(result.schedule);
+      // proceeds to show the auditorium
       setStep(2);
+      // prepare to receive messages
+      setFlag(true);
       if (result.seats.length < numberseats) {
         toast.error(
           `You have already reserved some tickets, only available ${result.seats.length}`
@@ -86,12 +120,15 @@ const SeatReservationStep = () => {
       console.log(error);
       if (error instanceof ApiError) {
         logout();
-        setStep(1);
+        onLogout(0); //state back to login
+        toast.error(error.msg);
+        return;
       }
       toast.error(String(error));
     }
   };
 
+  // handles the increment/decrement of desired seats
   function changeSeats(increment: boolean) {
     setNumberSeats((prev) => {
       if (increment) {
@@ -102,6 +139,7 @@ const SeatReservationStep = () => {
     });
   }
 
+  // Handle the selection of a seat to reserve or unreserve
   async function selectedSeatHandler(
     row: number,
     column: number,
@@ -117,11 +155,18 @@ const SeatReservationStep = () => {
           row + 1,
           column + 1
         );
+        // updates layout
         setLayout((prev) => {
           const newLayout = prev.map((row) => [...row]);
-          newLayout[result.deletedRow - 1][result.deletedCol - 1] = 0;
+          //newLayout[result.deletedRow - 1][result.deletedCol - 1] = 0;
+          updateLayout(newLayout, selSeats, {
+            row: result.deletedRow,
+            col: result.deletedCol,
+            status: 0,
+          });
           return newLayout;
         });
+        // removes seat from list of selected seats
         setSelSeats((prev) => {
           const newData = [...prev];
           return newData.filter(
@@ -143,11 +188,17 @@ const SeatReservationStep = () => {
           column + 1,
           schedule
         );
+        // updates layout with new seat
         setLayout((prev) => {
           const newLayout = prev.map((row) => [...row]);
-          newLayout[result.row - 1][result.col - 1] = 2;
+          updateLayout(newLayout, selSeats, {
+            row: result.row,
+            col: result.col,
+            status: 2,
+          });
           return newLayout;
         });
+        // add new seat to list of selected seats
         setSelSeats((prev) => {
           const newSeats = [...prev];
           newSeats.push({ row: result.row, column: result.col });
@@ -159,10 +210,36 @@ const SeatReservationStep = () => {
       console.log(error);
       if (error instanceof ApiError) {
         logout();
-        setStep(1);
+        onLogout(0); // state back to login
+        toast.error(error.msg);
+        return;
       }
       toast.error(String(error));
     }
+  }
+
+  // verify the seats before procedding to checkout
+  function checkoutHandler() {
+    if (selSeats.length === 0) {
+      toast.error("There are no seats reserved");
+      setConfirmation(false);
+      return;
+    }
+    if (selSeats.length < numberseats) {
+      toast("You have reserved less seats than those desired");
+      setConfirmation(true);
+      return;
+    }
+    continueHandler();
+  }
+
+  function cancelHandler() {
+    // TODO send an api call to cancel reservation according with the session
+    navigate("/");
+  }
+
+  function continueHandler() {
+    // TODO send the seats to continue with paying
   }
 
   return (
@@ -219,14 +296,127 @@ const SeatReservationStep = () => {
             Seats
           </Button>
         </Box>
+        <Box
+          left="5px"
+          top="5px"
+          p="3px"
+          sx={{ position: { sx: "unset", sm: "absolute" } }}
+        >
+          <Box display="inline" mr="10px">
+            <Button variant="contained" onClick={cancelHandler}>
+              Cancel
+            </Button>
+          </Box>
+        </Box>
       </Box>
-      <Divider sx={{ mt: "10px", mb: "10px" }} variant="fullWidth" />
-      {/* ------- auditoriu seats selection -------- */}
-      <Box m="10px">
-        <Auditorium layout={layout} onSelectSeat={selectedSeatHandler} />
-      </Box>
+      {/* ------- END seats quantity selection -------- */}
+      {/* ------- START time keeping section -------- */}
+      {step !== 1 && (
+        <Divider sx={{ mt: "10px", mb: "10px" }} variant="fullWidth" />
+      )}
+      {step !== 1 && (
+        <Box>
+          <TimeRemaining
+            maxTime={MAX_SECONDS}
+            onTimeFinish={() => {}}
+          ></TimeRemaining>
+        </Box>
+      )}
+      {/* ------- END time keeping section -------- */}
+      {/* ------- START auditorium seats selection -------- */}
+      {step !== 1 && (
+        <Box m="10px">
+          <Auditorium layout={layout} onSelectSeat={selectedSeatHandler} />
+        </Box>
+      )}
+      {step !== 1 && (
+        <Box>
+          {!confirmation && step !== 1 && (
+            <Box display="flex" justifyContent="center" mb="10px">
+              <Button variant="contained" onClick={checkoutHandler}>
+                Proceed to checkout
+              </Button>
+            </Box>
+          )}
+          {confirmation && (
+            <Box display="flex" justifyContent="center" columnGap="10px">
+              <Box display="flex" justifyContent="center" mb="10px">
+                <Button
+                  variant="contained"
+                  onClick={() => setConfirmation(false)}
+                >
+                  Cancel
+                </Button>
+              </Box>
+
+              <Box display="flex" justifyContent="center" mb="10px">
+                <Button variant="contained" onClick={checkoutHandler}>
+                  Proceed
+                </Button>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      )}
     </Paper>
   );
 };
+
+/**
+ * updates the layout according to the new or removed seats and the messages received from socket
+ * @param layout
+ * @param SelectedSeats
+ * @param receivedMsg
+ * @returns
+ */
+function updateLayout(
+  layout: number[][],
+  SelectedSeats: { row: number; column: number }[],
+  receivedMsg?:
+    | { row: number; col: number; status: boolean }[]
+    | { row: number; col: number; status: number }
+) {
+  // check if an update was received
+  if (receivedMsg) {
+    // an updated was received either by the user or other users
+    if (Array.isArray(receivedMsg)) {
+      receivedMsg.forEach((value) => {
+        // to avoid disabling a seat the user selected because of the message received
+        // by the socket, the messages are filtered against the current selected seats
+        if (value.status === false) {
+          layout[value.row - 1][value.col - 1] = value.status ? 1 : 0;
+          return;
+        }
+        const exists =
+          SelectedSeats.findIndex(
+            (seat) => seat.row === value.row && seat.column === value.col
+          ) >= 0;
+        if (exists) return;
+        const seatValue = layout[value.row - 1][value.col - 1];
+        if (seatValue !== 0) return;
+        layout[value.row - 1][value.col - 1] = value.status ? 1 : 0;
+      });
+    } else {
+      // an update from the user add or remove one reservation
+      // documentar
+      // remove seat, must update layout with selected seats first
+      // then update the seat removed
+      SelectedSeats.forEach((value) => {
+        layout[value.row - 1][value.column - 1] = 2;
+      });
+      layout[receivedMsg.row - 1][receivedMsg.col - 1] = receivedMsg.status;
+      return;
+    }
+  } else {
+    // just update the layout with the selected seats
+    SelectedSeats.forEach((value) => {
+      layout[value.row - 1][value.column - 1] = 2;
+    });
+  }
+}
+
+interface props {
+  onLogout: React.Dispatch<React.SetStateAction<number>>;
+}
 
 export default SeatReservationStep;
