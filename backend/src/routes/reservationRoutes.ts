@@ -3,6 +3,7 @@ import {
   deleteSeat,
   generateReservation,
   reserveSeat,
+  deleteReservation,
 } from "../controllers/reservationControllers";
 import {
   reserveValidator,
@@ -36,6 +37,13 @@ router.delete(
   authValidator,
   userExistValidator,
   deleteSeat
+);
+
+router.delete(
+  "/removeReservation/:session",
+  authValidator,
+  userExistValidator,
+  deleteReservation
 );
 
 export default router;

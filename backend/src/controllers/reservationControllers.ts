@@ -8,16 +8,25 @@ import { randomInt, randomUUID } from "crypto";
 import dayjs from "dayjs";
 import { sioServer } from "../socketServer";
 
+/**
+ * Create a reservation for the seats requested if, the seats are available
+ * the maximum reservation per session has not been reached, the maximum reservation
+ * for a single schedule has not been reached
+ */
 export async function generateReservation(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
+  // schedule data and time
   const date = req.body.date;
   const time = req.body.time;
+  // movie id
   const movieId = req.body.movie;
   let seats = req.body.seats ? parseInt(req.body.seats) : 0;
   const userId = res.locals.userId!;
+  // when request come though this api it tries to associate the socket id
+  // to the room of the same movie to notify the users in real time
   const socketClientId: string = req.body.sessionId;
   try {
     //checks for validation error before continuing
@@ -188,15 +197,21 @@ export async function generateReservation(
   }
 }
 
+/**
+ * Create a reservation for the requested single seat
+ */
 export async function reserveSeat(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
+  // session id of the current user
   const session = parseInt(req.body.session);
   const userId = res.locals.userId;
+  // desired seat row and column
   const row = parseInt(req.body.row);
   const column = parseInt(req.body.column);
+  // id of the schedule the user is reserving to
   const schedule: string | undefined = req.body.schedule;
   let client = null;
   try {
@@ -331,6 +346,7 @@ export async function reserveSeat(
       row: insertedSeat.seat_row,
       col: insertedSeat.seat_col,
     });
+    // notify though socket the new reservation
     if (sioServer === null) return;
     sioServer.to(schedule_id ? schedule_id : "").emit("event", {
       status: true,
@@ -350,13 +366,18 @@ export async function reserveSeat(
   }
 }
 
+/**
+ * deletes the reservation of a single seat
+ */
 export async function deleteSeat(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
+  // session of the current user
   const session = parseInt(req.params.session);
   const userId = res.locals.userId;
+  // seat row and column
   const row = parseInt(req.params.row);
   const column = parseInt(req.params.column);
   let client = null;
@@ -398,6 +419,7 @@ export async function deleteSeat(
       deletedRow: row,
       deletedCol: column,
     });
+    // notify through socket the deletion of the reserved seat
     if (sioServer === null) return;
     sioServer.to(schedule_id ? schedule_id : "").emit("event", {
       status: false,
@@ -417,11 +439,82 @@ export async function deleteSeat(
 }
 
 /**
+ * Delete all the seats from a reservation if the user cancel or timeout
+ */
+export async function deleteReservation(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  // session id of the current user
+  const session = parseInt(req.params.session);
+  const userId = res.locals.userId;
+  let client = null;
+  try {
+    client = await dbQueryWithClient();
+    //checks for validation error before continuing
+    validationResults(req);
+    client.query("START TRANSACTION"); // start transaction
+    /* ------- start section: validate reservation -----  */
+    let result = await client.query(
+      `SELECT seat_row, seat_col, schedule_id FROM reservations
+      WHERE "session" = $1
+      AND user_id = $2
+    `,
+      [session, userId]
+    );
+    if (result.rows.length === 0) {
+      // there is no reservation for the comb of user and session
+      res.status(404).json({
+        msg: "There is no reservation available",
+      });
+      return;
+    }
+    const seats = result.rows.map((value) => {
+      return {
+        row: value.seat_row as number,
+        col: value.seat_col as number,
+        schedule: value.schedule_id as string,
+      };
+    });
+    /* ------- end section: validate reservation -----  */
+    /* ------- start section: delete reservation ---------  */
+    let result2 = await client.query(
+      `DELETE FROM reservations
+      WHERE "session" = $1
+      AND user_id = $2`,
+      [session, userId]
+    );
+    await client.query("commit");
+    res.status(200).json({
+      msg: "Reservation deleted",
+    });
+    // report through socket the deletion of the reserved seats
+    if (sioServer === null) return;
+    for (let seatIndex = 0; seatIndex < seats.length; seatIndex++) {
+      const seat = seats[seatIndex];
+      sioServer
+        .to(seat.schedule ? seat.schedule : "")
+        .emit("event", { status: false, row: seat.row, col: seat.col });
+    }
+    /* ------- end section: delete reservation ---------  */
+  } catch (error) {
+    if (client !== null) await client.query("rollback");
+    console.log(error);
+    // checks if the error was a validation error
+    if (validationResponse(error, res)) return;
+    res.status(500).json({ error: "Internal error server" });
+  } finally {
+    if (client !== null) client.release();
+  }
+}
+
+/**
  * Generates a layout of the auditorium's seats
  * @param rows number od rows
  * @param cols number of columns
  * @param reserved list of reserved seats
- * @returns
+ * @returns array of boolean[][] representing the layout of the auditorium
  */
 function createLayout(
   rows: number,
