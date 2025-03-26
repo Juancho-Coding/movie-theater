@@ -14,6 +14,7 @@ import {
   getResevationSeats,
   reserveOneSeat,
   unreserveOneSeat,
+  deleteReservation,
 } from "../../api/reservationApi";
 
 import classes from "./SeatReservationStep.module.css";
@@ -24,6 +25,7 @@ import { ApiError } from "../../api/apiHelper";
 import Auditorium from "./Auditorium";
 import { useSocket } from "../../hooks/useSocket";
 import { TimeRemaining } from "./TimeRemaining";
+import ExpiredDialog from "./ExpiredDialog";
 
 // TODO change for a configuration parameteralld by an api
 const MAX_SEATS = 5;
@@ -60,6 +62,8 @@ const SeatReservationStep = ({ onLogout }: props) => {
   const [isConnected, socketId, getMessages] = useSocket();
   // flag confirmation of checkout
   const [confirmation, setConfirmation] = useState(false);
+  // flag to open dialog when time expired
+  const [opneDialog, setOpenDialog] = useState(false);
 
   // Validates the movies parameters exists before sending a reservation
   useEffect(() => {
@@ -233,9 +237,34 @@ const SeatReservationStep = ({ onLogout }: props) => {
     continueHandler();
   }
 
-  function cancelHandler() {
-    // TODO send an api call to cancel reservation according with the session
+  // cancel the current reservation
+  async function cancelHandler() {
+    if (selSeats.length === 0) {
+      navigate("/");
+      return;
+    }
+    try {
+      const result = await deleteReservation(userData?.token, session);
+      toast.success(result.msg);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof ApiError) {
+        logout();
+      }
+      toast.error(String(error));
+    }
     navigate("/");
+  }
+
+  // handles the time expired event
+  function timeExpiredHandler() {
+    setOpenDialog(true);
+  }
+
+  // close the dialog and cancel any reservation if available
+  async function closedDialogHandler() {
+    setOpenDialog(false);
+    await cancelHandler();
   }
 
   function continueHandler() {
@@ -244,6 +273,7 @@ const SeatReservationStep = ({ onLogout }: props) => {
 
   return (
     <Paper elevation={3} className={classes["reservation-container"]}>
+      <ExpiredDialog open={opneDialog} onClose={closedDialogHandler} />
       {/* ------ main title -------- */}
       <Box className={classes["reservation-title"]}>
         <Typography variant="body1" fontWeight="700" color="white">
@@ -318,7 +348,7 @@ const SeatReservationStep = ({ onLogout }: props) => {
         <Box>
           <TimeRemaining
             maxTime={MAX_SECONDS}
-            onTimeFinish={() => {}}
+            onTimeFinish={timeExpiredHandler}
           ></TimeRemaining>
         </Box>
       )}

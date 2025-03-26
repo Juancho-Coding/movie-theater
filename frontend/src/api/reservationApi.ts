@@ -111,3 +111,28 @@ export async function unreserveOneSeat(
     await response.json();
   return data;
 }
+
+export async function deleteReservation(
+  token: string | undefined,
+  session: number
+) {
+  // validates token
+  if (token === undefined) throw new Error("Authentication expired");
+  const response = await fetch(
+    `${BASEURL}/reserve/removeReservation/${session}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  if (!response.ok) {
+    const cause = await response.json();
+    //token expired or failed
+    if (response.status === 401) throw new ApiError(401, cause.msg);
+    throw new Error(cause.msg);
+  }
+  const data: { msg: string } = await response.json();
+  return data;
+}
