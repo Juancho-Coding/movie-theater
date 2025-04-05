@@ -3,12 +3,19 @@ import http from "http";
 import { startServer } from "./server";
 import { socketioServer } from "./socketServer";
 import env from "dotenv";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import { createEmailTransporter } from "./utils/nodemailer";
+
+dayjs.extend(utc);
 
 (async () => {
   // load secrets as env variables
   env.config();
   // initialize connection with db
   initializePool();
+  // initialize nodemailer transporter
+  createEmailTransporter();
   try {
     // test the connection with db
     await testConnection();
