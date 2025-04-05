@@ -33,7 +33,7 @@ import ReservationSummary from "./ReservationSummary";
 const MAX_SEATS = 5;
 
 // TODO change for a configuration parameteralld by an api
-const MAX_SECONDS = 1200;
+const MAX_SECONDS = 300;
 
 const SeatReservationStep = ({ nextStep, onUpdateSeats, onLogout }: props) => {
   const params = useParams();

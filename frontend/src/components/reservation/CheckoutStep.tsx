@@ -15,7 +15,7 @@ import { ApiError } from "../../api/apiHelper";
 import { makePayment } from "../../api/paymentApi";
 
 // TODO change for a configuration parameteralld by an api
-const MAX_SECONDS = 600;
+const MAX_SECONDS = 300;
 
 const CheckoutStep = ({ info, title, nextStep }: props) => {
   const navigate = useNavigate();
