@@ -26,14 +26,16 @@ import Auditorium from "./Auditorium";
 import { useSocket } from "../../hooks/useSocket";
 import { TimeRemaining } from "./TimeRemaining";
 import ExpiredDialog from "./ExpiredDialog";
+import dayjs from "dayjs";
+import ReservationSummary from "./ReservationSummary";
 
 // TODO change for a configuration parameteralld by an api
 const MAX_SEATS = 5;
 
 // TODO change for a configuration parameteralld by an api
-const MAX_SECONDS = 300;
+const MAX_SECONDS = 1200;
 
-const SeatReservationStep = ({ onLogout }: props) => {
+const SeatReservationStep = ({ nextStep, onUpdateSeats, onLogout }: props) => {
   const params = useParams();
   const navigate = useNavigate();
   // when this component is loaded the page verification is already done so
@@ -56,6 +58,8 @@ const SeatReservationStep = ({ onLogout }: props) => {
   const [session, setSession] = useState(-1);
   // stores the id of the current schedule
   const [schedule, setSchedule] = useState("");
+  // stores the price of the seat
+  const [price, setPrice] = useState(0);
   // stores the flag to start receiving messages
   const [flag, setFlag] = useState(false);
   // hook to interact with the socket and the messages
@@ -63,7 +67,7 @@ const SeatReservationStep = ({ onLogout }: props) => {
   // flag confirmation of checkout
   const [confirmation, setConfirmation] = useState(false);
   // flag to open dialog when time expired
-  const [opneDialog, setOpenDialog] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
 
   // Validates the movies parameters exists before sending a reservation
   useEffect(() => {
@@ -88,6 +92,20 @@ const SeatReservationStep = ({ onLogout }: props) => {
   // reset the checkout button when seats are selected
   useEffect(() => setConfirmation(false), [selSeats]);
 
+  useEffect(() => {
+    const seats = selSeats.map((s) => {
+      return { row: s.row, col: s.column };
+    });
+    onUpdateSeats(
+      seats,
+      price,
+      0,
+      session,
+      `${dayjs(date).format("MMMM DD of YYYY")} at ${timeId}`,
+      schedule
+    );
+  }, [selSeats, price, onUpdateSeats, session, schedule, date, timeId]);
+
   // try to make the initial reservation
   const getSeatsHandler = async () => {
     try {
@@ -111,6 +129,8 @@ const SeatReservationStep = ({ onLogout }: props) => {
       setSession(result.session);
       // stores the schedule id
       setSchedule(result.schedule);
+      // stores the price of the seat
+      setPrice(result.price);
       // proceeds to show the auditorium
       setStep(2);
       // prepare to receive messages
@@ -120,6 +140,7 @@ const SeatReservationStep = ({ onLogout }: props) => {
           `You have already reserved some tickets, only available ${result.seats.length}`
         );
       }
+      // TODO receive tax value
     } catch (error) {
       console.log(error);
       if (error instanceof ApiError) {
@@ -268,126 +289,147 @@ const SeatReservationStep = ({ onLogout }: props) => {
   }
 
   function continueHandler() {
-    // TODO send the seats to continue with paying
+    nextStep();
   }
 
   return (
     <Paper elevation={3} className={classes["reservation-container"]}>
-      <ExpiredDialog open={opneDialog} onClose={closedDialogHandler} />
+      <ExpiredDialog open={openDialog} onClose={closedDialogHandler} />
       {/* ------ main title -------- */}
       <Box className={classes["reservation-title"]}>
         <Typography variant="body1" fontWeight="700" color="white">
-          {`Hello ${userData?.name}, please select the number of seats and their position`}
+          {`Hey, ${userData?.name}! Please choose the number of seats and pick your preferred spots for `}
+          <Typography
+            component="span"
+            variant="body1"
+            fontWeight="700"
+            color="white"
+            fontSize="1.1rem"
+          >
+            {`${dayjs(date).format("MMMM DD of YYYY")} at ${timeId}`}
+          </Typography>
         </Typography>
       </Box>
       {/* ------- seats quantity selection -------- */}
-      <Box position="relative">
-        <Box className={classes["seat-selection"]}>
-          <Box>
-            <IconButton
-              disabled={step !== 1}
-              onClick={() => changeSeats(false)}
-            >
-              <RemoveIcon />
-            </IconButton>
-          </Box>
-          <TextField
-            size="small"
-            disabled
-            value={numberseats}
-            slotProps={{
-              htmlInput: {
-                style: {
-                  textAlign: "center",
-                  fontWeight: "800",
-                  fontSize: "1.2rem",
-                  width: "40px",
+      <Box>
+        <Box position="relative">
+          <Box className={classes["seat-selection"]}>
+            <Box>
+              <IconButton
+                disabled={step !== 1}
+                onClick={() => changeSeats(false)}
+              >
+                <RemoveIcon />
+              </IconButton>
+            </Box>
+            <TextField
+              size="small"
+              disabled
+              value={numberseats}
+              slotProps={{
+                htmlInput: {
+                  style: {
+                    textAlign: "center",
+                    fontWeight: "800",
+                    fontSize: "1.2rem",
+                    width: "40px",
+                  },
                 },
-              },
-            }}
-          />
-          <Box>
-            <IconButton disabled={step !== 1} onClick={() => changeSeats(true)}>
-              <AddIcon />
-            </IconButton>
+              }}
+            />
+            <Box>
+              <IconButton
+                disabled={step !== 1}
+                onClick={() => changeSeats(true)}
+              >
+                <AddIcon />
+              </IconButton>
+            </Box>
           </Box>
-        </Box>
-        <Box
-          right="5px"
-          top="5px"
-          p="3px"
-          sx={{ position: { sx: "unset", sm: "absolute" } }}
-        >
-          <Button
-            disabled={step !== 1}
-            variant="contained"
-            onClick={getSeatsHandler}
+          <Box
+            right="5px"
+            top="5px"
+            p="3px"
+            sx={{ position: { sx: "unset", sm: "absolute" } }}
           >
-            Seats
-          </Button>
-        </Box>
-        <Box
-          left="5px"
-          top="5px"
-          p="3px"
-          sx={{ position: { sx: "unset", sm: "absolute" } }}
-        >
-          <Box display="inline" mr="10px">
-            <Button variant="contained" onClick={cancelHandler}>
-              Cancel
+            <Button
+              disabled={step !== 1}
+              variant="contained"
+              onClick={getSeatsHandler}
+            >
+              Seats
             </Button>
+          </Box>
+          <Box
+            left="5px"
+            top="5px"
+            p="3px"
+            sx={{ position: { sx: "unset", sm: "absolute" } }}
+          >
+            <Box display="inline" mr="10px">
+              <Button variant="contained" onClick={cancelHandler}>
+                Cancel
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>
       {/* ------- END seats quantity selection -------- */}
       {/* ------- START time keeping section -------- */}
       {step !== 1 && (
-        <Divider sx={{ mt: "10px", mb: "10px" }} variant="fullWidth" />
-      )}
-      {step !== 1 && (
-        <Box>
-          <TimeRemaining
-            maxTime={MAX_SECONDS}
-            onTimeFinish={timeExpiredHandler}
-          ></TimeRemaining>
-        </Box>
+        <>
+          <Divider sx={{ mt: "10px", mb: "10px" }} variant="fullWidth" />
+
+          <Box>
+            <TimeRemaining
+              maxTime={MAX_SECONDS}
+              onTimeFinish={timeExpiredHandler}
+            ></TimeRemaining>
+          </Box>
+        </>
       )}
       {/* ------- END time keeping section -------- */}
       {/* ------- START auditorium seats selection -------- */}
-      {step !== 1 && (
-        <Box m="10px">
-          <Auditorium layout={layout} onSelectSeat={selectedSeatHandler} />
-        </Box>
-      )}
+
       {step !== 1 && (
         <Box>
-          {!confirmation && step !== 1 && (
-            <Box display="flex" justifyContent="center" mb="10px">
-              <Button variant="contained" onClick={checkoutHandler}>
-                Proceed to checkout
-              </Button>
-            </Box>
-          )}
-          {confirmation && (
-            <Box display="flex" justifyContent="center" columnGap="10px">
-              <Box display="flex" justifyContent="center" mb="10px">
-                <Button
-                  variant="contained"
-                  onClick={() => setConfirmation(false)}
-                >
-                  Cancel
-                </Button>
-              </Box>
-
+          <Box m="10px">
+            <Auditorium layout={layout} onSelectSeat={selectedSeatHandler} />
+          </Box>
+          <Box>
+            {!confirmation && step !== 1 && (
               <Box display="flex" justifyContent="center" mb="10px">
                 <Button variant="contained" onClick={checkoutHandler}>
-                  Proceed
+                  Proceed to checkout
                 </Button>
               </Box>
-            </Box>
-          )}
+            )}
+            {confirmation && (
+              <Box display="flex" justifyContent="center" columnGap="10px">
+                <Box display="flex" justifyContent="center" mb="10px">
+                  <Button
+                    variant="contained"
+                    onClick={() => setConfirmation(false)}
+                  >
+                    Cancel
+                  </Button>
+                </Box>
+
+                <Box display="flex" justifyContent="center" mb="10px">
+                  <Button variant="contained" onClick={checkoutHandler}>
+                    Proceed
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Box>
         </Box>
       )}
+      <ReservationSummary
+        seats={selSeats}
+        pricePerSeat={price}
+        taxPerSeat={0}
+      />
     </Paper>
   );
 };
@@ -447,6 +489,15 @@ function updateLayout(
 
 interface props {
   onLogout: React.Dispatch<React.SetStateAction<number>>;
+  nextStep: () => void;
+  onUpdateSeats: (
+    seats: { row: number; col: number }[],
+    price: number,
+    tax: number,
+    session: number,
+    time: string,
+    schedule: string
+  ) => void;
 }
 
 export default SeatReservationStep;
