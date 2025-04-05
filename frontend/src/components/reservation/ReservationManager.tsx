@@ -67,7 +67,7 @@ const ReservationManager = () => {
       </Box>
       {/* right section shows the steps to reserve */}
       <Box className={classes["reserve-container"]}>
-        <Reservation />
+        <Reservation title={movie?.title || "Loading"} />
       </Box>
     </Box>
   );
