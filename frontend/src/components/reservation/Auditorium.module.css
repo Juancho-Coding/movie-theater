@@ -37,6 +37,15 @@
   border-radius: 15%;
   flex-shrink: 0;
   text-align: center;
+  transition: transform 0.2s ease;
+}
+
+.seats:hover {
+  transform: scale(1.1);
+}
+
+.seats:active {
+  transform: scale(0.9);
 }
 
 .seat-available {
