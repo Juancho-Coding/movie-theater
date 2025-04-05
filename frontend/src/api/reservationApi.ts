@@ -6,6 +6,7 @@ type ReservationRes = {
   status: boolean;
   session: number;
   schedule: string;
+  price: number;
 };
 
 export async function getResevationSeats(
@@ -49,6 +50,7 @@ export async function getResevationSeats(
     layout,
     session: data.session,
     schedule: data.schedule,
+    price: data.price,
   };
 }
 
