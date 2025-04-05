@@ -124,9 +124,9 @@ export async function generateReservation(
       )
       .join(", ");
     // get dates to create the reservations
-    const currDate = dayjs();
+    const currDate = dayjs().utc();
     const createdAt = currDate.format("YYYY-MM-DDTHH:mm:ss");
-    const expiresAt = currDate.add(10, "minute").format("YYYY-MM-DDTHH:mm:ss");
+    const expiresAt = currDate.add(15, "minute").format("YYYY-MM-DDTHH:mm:ss");
     // identify the reservations made at the same time
     const session = randomInt(100000); // TODO Improve to avoid possibility ot get same number over time
 
@@ -319,8 +319,11 @@ export async function reserveSeat(
     /* ------- end section: validate limit of tickets to reserve and seat -----  */
     /* ------- start section: reserve new seat ---------  */
     const currDate = dayjs();
-    const createdAt = currDate.format("YYYY-MM-DDTHH:mm:ss");
-    const expiresAt = currDate.add(10, "minute").format("YYYY-MM-DDTHH:mm:ss");
+    const createdAt = currDate.utc().format("YYYY-MM-DDTHH:mm:ss");
+    const expiresAt = currDate
+      .add(10, "minute")
+      .utc()
+      .format("YYYY-MM-DDTHH:mm:ss");
     // store the new reservation
     let result5 = await client.query(
       `INSERT INTO reservations(id, schedule_id, user_id, status, created_at, expires_at, seat_row, seat_col, session)
