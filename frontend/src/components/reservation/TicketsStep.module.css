@@ -1,0 +1,192 @@
+.tickets-container {
+  width: 70%;
+}
+
+.tickets-title {
+  min-height: 40px;
+  background-color: #3099cc;
+  padding: 10px;
+}
+
+.tickets-content {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  height: 450px;
+  column-gap: 10px;
+}
+
+.tickets-content-active {
+  justify-content: start;
+}
+
+.ticket-message {
+  width: 200px;
+  height: 300px;
+  transition: all 0.5s ease-out;
+}
+
+.ticket-message-active {
+  animation: filltitle 0.5s ease-in-out forwards;
+  position: relative;
+  z-index: 20;
+}
+
+.ticket-message-active::after {
+  content: "";
+  display: block;
+  width: 70%;
+  height: 70%;
+  background-color: white;
+  border: 1px solid gray;
+  position: absolute;
+  left: 20%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: -1;
+  animation: printer 2s ease-in-out forwards, paper 1s linear infinite;
+}
+
+@keyframes printer {
+  0% {
+    left: 20%;
+  }
+  100% {
+    left: 50%;
+  }
+}
+
+@keyframes paper {
+  0% {
+    top: 40%;
+  }
+  20% {
+    top: 60%;
+  }
+  40% {
+    top: 40%;
+  }
+  60% {
+    top: 60%;
+  }
+  100% {
+    top: 40%;
+  }
+}
+
+.ticket-message-title {
+  padding: 20px;
+  background-color: #4da147;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.ticket-message-title-active {
+  animation: filltitle 0.5s ease-in-out forwards;
+}
+
+.ticket-display {
+  margin-left: 30px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  column-gap: 10px;
+  overflow-x: auto;
+}
+
+.ticket-display-active {
+  justify-content: center;
+  margin-left: 0;
+}
+
+@keyframes filltitle {
+  0% {
+    height: 30%;
+    background-color: #4da147;
+  }
+  100% {
+    height: 100%;
+    background-color: #b8b8b8;
+  }
+}
+
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  column-gap: 10px;
+  margin: 10px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+@media screen and (max-width: 768px) {
+  .tickets-container {
+    width: 100%;
+  }
+
+  .tickets-content {
+    flex-direction: column;
+    height: auto;
+    row-gap: 10px;
+  }
+
+  .ticket-message {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+  }
+
+  .ticket-message-active::after {
+    width: 70%;
+    height: 70%;
+    left: 0;
+    top: 0;
+    left: 50%;
+    top: 20%;
+    transform: translateX(-50%);
+    z-index: -1;
+    animation: printer 2s ease-in-out forwards, paper 1s linear infinite;
+  }
+
+  .ticket-display {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+
+  @keyframes printer {
+    0% {
+      top: 20%;
+    }
+    100% {
+      top: 50%;
+    }
+  }
+
+  @keyframes paper {
+    0% {
+      left: 40%;
+    }
+    20% {
+      left: 60%;
+    }
+    40% {
+      left: 40%;
+    }
+    60% {
+      left: 60%;
+    }
+    100% {
+      left: 40%;
+    }
+  }
+}
