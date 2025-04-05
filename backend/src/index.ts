@@ -6,6 +6,7 @@ import env from "dotenv";
 import dayjs from "dayjs";
 import utc from "dayjs/plugin/utc";
 import { createEmailTransporter } from "./utils/nodemailer";
+import watchReservations from "./utils/reservationKepper";
 
 dayjs.extend(utc);
 
@@ -26,6 +27,8 @@ dayjs.extend(utc);
     server.listen(serverPort, () => {
       // TODO implement better logging with std.out
       console.log("server started on port " + serverPort);
+      // watch for expire reservations
+      watchReservations();
     });
   } catch (error) {
     console.log("Error occured");
