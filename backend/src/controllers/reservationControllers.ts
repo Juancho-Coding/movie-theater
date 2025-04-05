@@ -175,6 +175,7 @@ export async function generateReservation(
       status: true,
       session: session,
       schedule: schedule.scheduleId,
+      price: schedule.price,
     };
     res.status(200).json(response);
     if (sioServer === null) return;
