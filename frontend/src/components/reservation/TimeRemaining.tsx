@@ -1,7 +1,11 @@
 import { Box, LinearProgress, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 
-export const TimeRemaining = ({ maxTime, onTimeFinish }: Props) => {
+export const TimeRemaining = ({
+  maxTime,
+  onTimeFinish,
+  pause = false,
+}: Props) => {
   // store the seconds remaining
   const [secRemaining, setSecRemaining] = useState<number>(maxTime);
   // store the reference of the interval
@@ -9,6 +13,7 @@ export const TimeRemaining = ({ maxTime, onTimeFinish }: Props) => {
 
   // create the interval function
   useEffect(() => {
+    if (pause) return;
     const timer = setInterval(() => {
       setSecRemaining((prev) => {
         const newRemaining = prev - 1 <= 0 ? 0 : prev - 1;
@@ -30,7 +35,7 @@ export const TimeRemaining = ({ maxTime, onTimeFinish }: Props) => {
         interval.current = null;
       }
     };
-  }, [onTimeFinish]);
+  }, [onTimeFinish, pause]);
 
   // chance color depending on the time remaining
   const color =
@@ -60,4 +65,5 @@ export const TimeRemaining = ({ maxTime, onTimeFinish }: Props) => {
 interface Props {
   maxTime: number;
   onTimeFinish: () => void;
+  pause?: boolean;
 }
