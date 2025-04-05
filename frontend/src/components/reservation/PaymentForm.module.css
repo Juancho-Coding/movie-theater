@@ -1,0 +1,8 @@
+.payment-card-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  max-width: 100%;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
