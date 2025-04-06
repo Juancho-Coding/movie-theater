@@ -1,3 +1,5 @@
+🌐 Available languages: [Spanish](README.es.md)
+
 # 🎬 Cinema Reservation System
 
 ## Imagen
