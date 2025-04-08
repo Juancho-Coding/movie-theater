@@ -47,6 +47,7 @@ export async function makePayment(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
@@ -86,6 +87,7 @@ export async function sendEmailTickets(
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
+      "ngrok-skip-browser-warning": "true",
     },
     body: formData,
   });

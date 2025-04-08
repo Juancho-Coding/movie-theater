@@ -10,6 +10,7 @@ export async function makeLogin(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ email, password, dummy }),
   });
@@ -30,6 +31,7 @@ export async function makeSignup(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
     },
     body: JSON.stringify({ name, email, password }),
   });

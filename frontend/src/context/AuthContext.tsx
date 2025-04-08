@@ -17,8 +17,9 @@ const authContext: {
   logout: () => boolean;
 } = {
   userData: null,
-  login: async (email: string, password: string, dummy: boolean) =>
-    new Promise<{ result: boolean; message: string }>((resolve, reject) =>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  login: async (_email: string, _password: string, _dummy: boolean) =>
+    new Promise<{ result: boolean; message: string }>((_resolve, reject) =>
       reject()
     ),
   logout: () => false,

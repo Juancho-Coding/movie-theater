@@ -29,7 +29,13 @@ export const useSocket = (): [
   }, [messages, setMessages]);
 
   useEffect(() => {
-    const socket = io(BASE_IO_URL, { autoConnect: false });
+    const socket = io(BASE_IO_URL, {
+      path: "/api/socket",
+      autoConnect: false,
+      extraHeaders: {
+        "ngrok-skip-browser-warning": "true",
+      },
+    });
     function onConnect() {
       setSocketId(socket.id);
       setIsConnected(true);

@@ -23,6 +23,7 @@ export async function getResevationSeats(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
@@ -67,6 +68,7 @@ export async function reserveOneSeat(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "ngrok-skip-browser-warning": "true",
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({
@@ -100,6 +102,7 @@ export async function unreserveOneSeat(
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
       },
     }
   );
@@ -126,6 +129,7 @@ export async function deleteReservation(
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
+        "ngrok-skip-browser-warning": "true",
       },
     }
   );

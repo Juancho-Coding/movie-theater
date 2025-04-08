@@ -13,7 +13,11 @@ export const getMoviesByDate = async (
   const url = new URL(`${BASEURL}/movies/moviesbydatetime`);
   url.searchParams.set("date", date.format("YYYY-MM-DD"));
   url.searchParams.set("time", date.format("HH:mm"));
-  const response = await fetch(url.toString());
+  const response = await fetch(url.toString(), {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
   if (!response.ok) {
     const cause = await response.json();
     throw new Error(cause.msg);
@@ -59,7 +63,11 @@ export const getMoviesByDate = async (
  * @returns movies list
  */
 export const getComingMovies = async (): Promise<movieData[]> => {
-  const response = await fetch(`${BASEURL}/movies/comingmovies`);
+  const response = await fetch(`${BASEURL}/movies/comingmovies`, {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
   if (!response.ok) {
     const cause = await response.json();
     throw new Error(cause.msg);
@@ -106,7 +114,11 @@ export const getComingMovies = async (): Promise<movieData[]> => {
 export const getMoviesById = async (id: number) => {
   const url = new URL(`${BASEURL}/movies/moviebyid`);
   url.searchParams.set("id", id.toString());
-  const response = await fetch(url.toString());
+  const response = await fetch(url.toString(), {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
   if (!response.ok) {
     const cause = await response.json();
     throw new Error(cause.msg);

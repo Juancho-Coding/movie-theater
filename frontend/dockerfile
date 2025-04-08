@@ -1,0 +1,26 @@
+# Base image for building the project
+FROM node:20-bullseye AS builder
+# Set working directory
+WORKDIR /src
+# Copy dependencies
+COPY package*.json ./
+COPY tsconfig*.json ./
+COPY vite.config.* ./
+# Install dependencies
+RUN npm install
+
+COPY . .
+# Build with typescript
+RUN npm run build
+
+# Step 2: Serve app with nginx
+FROM nginx:1-alpine-slim
+# Remove default nginx static content
+RUN rm -rf /usr/share/nginx/html/*
+# Copy build output to nginx
+COPY --from=builder /src/dist /usr/share/nginx/html
+# Copy script to make env available to nginx
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+EXPOSE 80
+ENTRYPOINT ["/entrypoint.sh"]
