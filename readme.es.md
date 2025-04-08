@@ -1,4 +1,4 @@
-🌐 Lenguajes Disponibles: [Ingles](README.md)
+🌐 Lenguajes Disponibles: [Ingles](readme.md)
 
 # 🎬 Cinema Reservation System
 

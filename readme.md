@@ -1,4 +1,4 @@
-🌐 Available languages: [Spanish](README.es.md)
+🌐 Available languages: [Spanish](readme.es.md)
 
 # 🎬 Cinema Reservation System
 
@@ -90,4 +90,4 @@ The database consists of several related tables to manage movie reservations and
 
 These are some features that could be added in the future to enrich the user experience:
 
-- 🧑‍💼 **Panel administrativo**: Interface for adding new movies, schedules, auditoriums, and viewing seat occupancy analytics.
+- 🧑‍💼 **Management Panel**: Interface for adding new movies, schedules, auditoriums, and viewing seat occupancy analytics.
