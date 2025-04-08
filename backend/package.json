@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src\\",
-    "debug": "tsx --inspect-brk .\\src\\index.ts"
+    "dev": "cross-env NODE_ENV=development tsx watch src\\",
+    "debug": "cross-env NODE_ENV=development tsx --inspect-brk .\\src\\index.ts",
+    "build": "rimraf dist && tsc"
   },
   "keywords": [],
   "author": "",
@@ -36,6 +37,8 @@
     "@types/node": "^22.13.5",
     "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.11.11",
+    "cross-env": "^7.0.3",
+    "rimraf": "^6.0.1",
     "socket.io-client": "^4.8.1",
     "tsx": "^4.19.3"
   }
