@@ -9,13 +9,11 @@ export default async function watchReservations() {
       client = await dbQueryWithClient();
       client.query("START TRANSACTION");
       const day = dayjs().utc().format();
-      console.log(day);
       const result = await dbQuery(
         `DELETE FROM reservations WHERE expires_at < $1 AND status='pending' RETURNING schedule_id, seat_row, seat_col`,
         [day]
       );
       client.query("COMMIT");
-      console.log(day, result.rows.length);
       if (result.rows.length === 0) return;
       if (sioServer === null) return;
       const reservations = result.rows as {

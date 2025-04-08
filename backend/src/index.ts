@@ -11,8 +11,8 @@ import watchReservations from "./utils/reservationKepper";
 dayjs.extend(utc);
 
 (async () => {
-  // load secrets as env variables
-  env.config();
+  // load secrets as env variables if running locally
+  if (process.env.NODE_ENV !== "production") env.config();
   // initialize connection with db
   initializePool();
   // initialize nodemailer transporter

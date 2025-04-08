@@ -7,6 +7,7 @@ export function socketioServer(server: http.Server) {
   const port = parseInt(process.env.SOCKET_PORT || "9005");
   // TODO implement options to modify the socketio behaviour
   const io = new Server(server, {
+    path: "/api/socket",
     cors: { origin: "*" },
   });
   io.on("connection", (socket) => {
@@ -14,6 +15,9 @@ export function socketioServer(server: http.Server) {
   });
   io.on("disconnect", (socket) => {
     console.log(`Client disconnected: ${socket.id}`);
+  });
+  io.on("error", (err) => {
+    console.error("Socket error:", err);
   });
   setIOServer(io);
 }

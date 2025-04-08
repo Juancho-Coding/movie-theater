@@ -18,7 +18,11 @@ export function startServer() {
     cors({
       origin: "*",
       methods: ["GET", "PUT", "POST", "PATCH", "DELETE", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
+      allowedHeaders: [
+        "Content-Type",
+        "Authorization",
+        "ngrok-skip-browser-warning",
+      ],
     })
   );
   // parses body incoming requests
