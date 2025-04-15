@@ -7,7 +7,7 @@ import { getMoviesByDate, getComingMovies } from "../../api/moviesApi";
 
 const MovieSectionManager = () => {
   // handles the date for the current movies section
-  const [date, setDate] = useState(dayjs());
+  const [date, setDate] = useState(dayjs("04-07-2025"));
   // movies on screen
   const [movies, setMovies] = useState<movieData[] | null>(null);
   // movies to be released
@@ -48,8 +48,8 @@ const MovieSectionManager = () => {
           sectionType={Type.AVAILABLE}
           movies={movies}
           filterDay={date}
-          minDay={dayjs("01-01-1990")}
-          maxDay={dayjs().add(7, "day")}
+          minDay={dayjs("04-07-2025")}
+          maxDay={dayjs("04-07-2025").add(7, "day")}
           setDate={setDate}
         />
       </Box>

@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Tooltip, Typography } from "@mui/material";
 import classes from "./MoviesSection.module.css";
 import { DatePicker } from "@mui/x-date-pickers";
 import MovieCard from "./MovieCard/MovieCard";
@@ -34,16 +34,27 @@ const MoviesSection = ({
       {showFilter && (
         <Box className={classes["filter-container"]}>
           <Typography>Filter by Date:</Typography>
-          <DatePicker
-            slotProps={{ textField: { size: "small" } }}
-            format="DD-MM-YYYY"
-            value={filterDay}
-            minDate={minDay}
-            maxDate={maxDay}
-            onChange={(date) => {
-              if (date && setDate) setDate(date);
-            }}
-          />
+          <Tooltip
+            title={
+              <Typography variant="body2">
+                Dates are limited for demo purposes
+              </Typography>
+            }
+            placement="right"
+          >
+            <Box>
+              <DatePicker
+                slotProps={{ textField: { size: "small" } }}
+                format="DD-MM-YYYY"
+                value={filterDay}
+                minDate={minDay}
+                maxDate={maxDay}
+                onChange={(date) => {
+                  if (date && setDate) setDate(date);
+                }}
+              />
+            </Box>
+          </Tooltip>
         </Box>
       )}
       {/*------- Shows the list of movies -------*/}

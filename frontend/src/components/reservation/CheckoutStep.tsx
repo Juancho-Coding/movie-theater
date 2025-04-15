@@ -106,7 +106,11 @@ const CheckoutStep = ({ info, title, nextStep }: props) => {
         </Box>
         <Box border="1px solid #aaaaaa" />
         <Box className={classes["checkout-payment"]}>
-          <PaymentForm onPay={paymentHandler} processing={processing} />
+          <PaymentForm
+            onPay={paymentHandler}
+            processing={processing}
+            onCancel={cancelHandler}
+          />
         </Box>
       </Box>
     </Paper>
