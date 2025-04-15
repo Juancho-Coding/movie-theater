@@ -15,7 +15,7 @@ import classes from "./PaymentForm.module.css";
 import { dinamicImport } from "../../utils/utils";
 import { validateCreditCard } from "../../api/paymentApi";
 
-const PaymentForm = ({ onPay, processing }: props) => {
+const PaymentForm = ({ onPay, onCancel, processing }: props) => {
   // start controlled form
   const [name, setName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
@@ -26,6 +26,7 @@ const PaymentForm = ({ onPay, processing }: props) => {
   const [errorCode, setErrorCode] = useState(false);
   const [Errorexpiry, setErrorExpiry] = useState(false);
   // end controlled form
+
   // store the icon used in the card number input
   const [cardIcon, setCardIcon] = useState("none");
   // store timeout id to cancel if multiples inputs
@@ -201,6 +202,14 @@ const PaymentForm = ({ onPay, processing }: props) => {
       <Box>
         <Button
           variant="contained"
+          loading={processing}
+          sx={{ mr: "5px" }}
+          onClick={onCancel}
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="contained"
           disabled={disabled}
           onClick={paymentHandler}
           endIcon={<PaymentIcon />}
@@ -238,6 +247,7 @@ const WarningMessage = ({ options = false }: { options?: boolean }) => {
 
 interface props {
   onPay: (holder: string, cardNumber: string, exp: string, cvv: string) => void;
+  onCancel: () => void;
   processing: boolean;
 }
 
