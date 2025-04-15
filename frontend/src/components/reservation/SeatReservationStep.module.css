@@ -6,7 +6,16 @@
   min-height: 40px;
   background-color: #3099cc;
   padding: 10px;
-  /* margin-bottom: 20px; */
+}
+
+.seat-selection-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 10px;
+  margin: 5px;
+  position: relative;
 }
 
 .seat-selection {
@@ -15,4 +24,31 @@
   justify-content: center;
   align-items: center;
   margin: 5px;
+}
+
+.seat-selection-buttons {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 5px 0 5px;
+}
+
+@media (max-width: 500px) {
+  .seat-selection-container {
+    position: static;
+  }
+
+  .seat-selection-buttons {
+    position: static;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+    margin: 0 5px 0 5px;
+  }
 }

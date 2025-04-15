@@ -312,7 +312,23 @@ const SeatReservationStep = ({ nextStep, onUpdateSeats, onLogout }: props) => {
       </Box>
       {/* ------- seats quantity selection -------- */}
       <Box>
-        <Box position="relative">
+        <Box className={classes["seat-selection-container"]}>
+          <Box className={classes["seat-selection-buttons"]}>
+            <Box>
+              <Button variant="contained" onClick={cancelHandler}>
+                Cancel
+              </Button>
+            </Box>
+            <Box>
+              <Button
+                disabled={step !== 1}
+                variant="contained"
+                onClick={getSeatsHandler}
+              >
+                Seats
+              </Button>
+            </Box>
+          </Box>
           <Box className={classes["seat-selection"]}>
             <Box>
               <IconButton
@@ -344,32 +360,6 @@ const SeatReservationStep = ({ nextStep, onUpdateSeats, onLogout }: props) => {
               >
                 <AddIcon />
               </IconButton>
-            </Box>
-          </Box>
-          <Box
-            right="5px"
-            top="5px"
-            p="3px"
-            sx={{ position: { sx: "unset", sm: "absolute" } }}
-          >
-            <Button
-              disabled={step !== 1}
-              variant="contained"
-              onClick={getSeatsHandler}
-            >
-              Seats
-            </Button>
-          </Box>
-          <Box
-            left="5px"
-            top="5px"
-            p="3px"
-            sx={{ position: { sx: "unset", sm: "absolute" } }}
-          >
-            <Box display="inline" mr="10px">
-              <Button variant="contained" onClick={cancelHandler}>
-                Cancel
-              </Button>
             </Box>
           </Box>
         </Box>
