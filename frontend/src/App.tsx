@@ -8,17 +8,28 @@ import MainTheme from "./themes/MainTheme";
 import MovieReservation from "./pages/MovieReservation";
 import AuthContextProvider from "./context/AuthContextProvider";
 import { Toaster } from "react-hot-toast";
+import { movieValidation } from "./loaders/MovieLoader";
+import MovieAvailable from "./protection/MovieAvailable";
+import NotFound from "./pages/NotFound";
+import ErrorBoundary from "./pages/404";
 
 const router = createBrowserRouter([
   // main page, shows the content visible to public
-  { path: "/", element: <MainMovies /> },
+  { path: "/", element: <MainMovies />, errorElement: <ErrorBoundary /> },
   {
     path: "/reservation/:movieId/:timeId/:date",
-    element: <MovieReservation />,
+    element: (
+      <MovieAvailable>
+        <MovieReservation />
+      </MovieAvailable>
+    ),
+    loader: movieValidation,
+    errorElement: <ErrorBoundary />,
   },
-  // logn page, for admin only
+  { path: "/notfound", element: <NotFound /> },
+  // logn page, for admin only pending to implement
   { path: "/login", element: <>hello world</> },
-  // admin page, allow changes and visualization of info
+  // admin page, allow changes and visualization of info, pending to implement
   { path: "/admin", element: <>hello world</> },
 ]);
 

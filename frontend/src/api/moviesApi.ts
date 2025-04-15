@@ -156,3 +156,32 @@ export const getMoviesById = async (id: number) => {
   };
   return movie;
 };
+
+/**
+ * check if the movieid, time and date are valid
+ * @param id identifier of the movie
+ * @param time showtime
+ * @param date date
+ * @returns boolean telling if movie date and time are valid
+ */
+export const checkMovieIsValid = async (
+  id: number,
+  time: string,
+  date: string
+) => {
+  const url = new URL(`${BASEURL}/movies/movieIsValid`);
+  url.searchParams.set("movie", id.toString());
+  url.searchParams.set("time", time);
+  url.searchParams.set("date", date);
+  const response = await fetch(url.toString(), {
+    headers: {
+      "ngrok-skip-browser-warning": "true",
+    },
+  });
+  if (!response.ok) {
+    const cause = await response.json();
+    throw new Error(cause.msg);
+  }
+  const result = (await response.json()) as { status: boolean };
+  return result;
+};
