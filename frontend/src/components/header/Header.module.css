@@ -4,8 +4,7 @@
   justify-content: space-between;
   align-items: center;
   height: 80px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 10px 20px 10px 20px;
   background-color: var(--color-header);
   box-shadow: var(--color-header-box-shadow);
   transition: all 0.3s ease;
@@ -24,4 +23,11 @@
 .header-logo > img {
   width: 100%;
   height: 100%;
+}
+
+@media (max-width: 500px) {
+  .header-logo {
+    width: 35px;
+    height: 35px;
+  }
 }
