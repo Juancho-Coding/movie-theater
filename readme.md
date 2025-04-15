@@ -2,12 +2,12 @@
 
 # 🎬 Cinema Reservation System
 
-## Imagen
+![Cineloop](frontend/public/frontpage.png)
 
 This is a cinema ticket reservation app that allows users to browse available showtimes, select movies, and choose their desired seats. Afterward, they can proceed with a simulated online payment and receive their tickets, with options for viewing and downloading them.
 The project is designed to simulate a real-world cinema booking system, applying modern fullstack development technologies in a complete flow covering frontend, backend, and data persistence
 
-live demo(link)
+[Movie theater Live demo](https://movie-theater-87qg.vercel.app/)
 
 ## ✨ Main Features
 
@@ -81,13 +81,30 @@ The database consists of several related tables to manage movie reservations and
 
 #### ⚠️ Nota: No se almacena información de tarjetas de credito
 
-## Instalación para uso Local
+## To run locally
 
-- dockerfile para frontend y backend
-- creacion de base de datos
+1. Create the database using the file `backend/Database_template.sql`
+
+2. Create a .env file in the backend folder:
+
+   - Database: DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DBNAME
+
+   - Server: SERVER_PORT, JWT_SECRET
+
+   - Email server: Uses Nodemailer, MAIL_USER, MAIL_API_KEY, MAIL_SERVER, MAIL_PORT
+
+3. Create a .env file in the frontend folder:
+
+   - VITE_BASE_URL: {server:port}/api/v1
+
+   - VITE_BASE_IO_URL: {server:port}
+
+4. In both backend and frontend folders, run `npm install` and `npm run dev`, or build the Docker image using the Dockerfile.
+
+5. Create a compose file to set up the containers and run compose up.
 
 ## 🚀 Future Improvements
 
-These are some features that could be added in the future to enrich the user experience:
+These are some features that will be added in the future to enrich the user experience:
 
 - 🧑‍💼 **Management Panel**: Interface for adding new movies, schedules, auditoriums, and viewing seat occupancy analytics.

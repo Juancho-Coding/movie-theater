@@ -1,13 +1,13 @@
 🌐 Lenguajes Disponibles: [Ingles](readme.md)
 
-# 🎬 Cinema Reservation System
+# 🎬 Sistema de Reservación para Cine
 
-## Imagen
+![Cineloop](frontend/public/frontpage.png)
 
 Esta es una aplicación para la reserva de boletos de cine que permite a los usuarios consultar las funciones disponibles, seleccionar películas y elegir los asientos que deseen. Luego, pueden proceder al pago en línea (simulado) y obtener sus tiquetes con opción de visualización y descarga.
 El proyecto fue diseñado con el objetivo de simular un sistema real de reservas en un cine, y aplica tecnologías modernas de desarrollo fullstack en un flujo completo que abarca frontend, backend y persistencia de datos.
 
-live demo(link)
+[Movie theater Live demo](https://movie-theater-87qg.vercel.app/)
 
 ## ✨ Principales Características
 
@@ -69,12 +69,6 @@ A continuación las principales herramientas usadas
 - 💳 **Credit card validation API**: Usada para validar el número de las tarjjetas de credito e la entidad que las expide. https://algobook.info/docs/credit-card-api
 - 🕵️‍♂️ **Random user generator**: Utilizada para crear usuarios ficticios de manera automática. Ideal para pruebas o demostraciones sin necesidad de ingresar información personal real, como correos electrónicos. https://randomuser.me/
 
-## 🚀 Futuras mejoras y adiciones
-
-Estas son algunas funcionalidades que podrían añadirse en el futuro para enriquecer la experiencia:
-
-- 🧑‍💼 **Panel administrativo**: Creación de un panel para agregar nuevas peliculas, horarios, salas y visualizar estadisticas sobre la ocupación de las salas.
-
 ## Estructura de la Base de Datos
 
 La base de datos tiene varias tablas relacionadas entre ellas para crear las reservas y la gestión de las peliculas, esta preparada para poder recibir cambios como agregar salas nuevas, nuevos horarios de funciones, peliculas proximas a estrenar.
@@ -87,7 +81,30 @@ La base de datos tiene varias tablas relacionadas entre ellas para crear las res
 
 #### ⚠️ Nota: No se almacena información de tarjetas de credito
 
-## Instalación para uso Local
+Script para creat tablas en la base de datos: **backend/Database_template.sql**
 
-- dockerfile para frontend y backend
-- creacion de base de datos
+## Para ejecutar localmente
+
+1. Crear base de datos con el archivo **backend/Database_template.sql**
+2. Crear archivo .env en backend:
+
+   - Base de datos: DB_USERNAME, DB_PASSWORD, DB_HOST, DB_PORT, DB_DBNAME
+
+   - Servidor: SERVER_PORT, JWT_SECRET
+
+   - Servidor email: Se usa nodemailer, MAIL_USER, MAIL_API_KEY, MAIL_SERVER, MAIL_PORT
+
+3. Crear archivo .env en frontend:
+
+   - VITE_BASE_URL: {servidor : puerto}/api/v1
+
+   - VITE_BASE_IO_URL: {servidor : puerto}
+
+4. En las carpetas **backend** y **frontend** ejecutar `npm install` y `npm run dev`, o crear la imagen de Docker con dockerfile
+5. Crear archivo compose para crear los containers y ejecutar `compose up`
+
+## 🚀 Futuras mejoras y adiciones
+
+Estas son algunas funcionalidades que podrían añadirse en el futuro para enriquecer la experiencia:
+
+- 🧑‍💼 **Panel administrativo**: Creación de un panel para agregar nuevas peliculas, horarios, salas y visualizar estadisticas sobre la ocupación de las salas.
