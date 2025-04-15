@@ -1,8 +1,16 @@
 .auditorium {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  align-items: center;
   justify-content: center;
+  overflow: auto;
+}
+
+.auditorium-small {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   overflow: auto;
 }
 

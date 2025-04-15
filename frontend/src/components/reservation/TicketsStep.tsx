@@ -9,6 +9,7 @@ import {
   Slide,
   TextField,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { jsPDF } from "jspdf";
 import { toPng } from "html-to-image";
@@ -42,6 +43,7 @@ const TicketsStep = ({ title, info }: props) => {
   // user information
   const { userData } = useContext(AuthContext);
   const navigate = useNavigate();
+  const small = useMediaQuery("(max-width: 700px)");
 
   // stops the confetti after 15 seconds
   // and hides the confetti after 2 seconds
@@ -219,54 +221,71 @@ const TicketsStep = ({ title, info }: props) => {
         )}
       </Box>
       {!animation && (
-        <Box className={classes["buttons-container"]}>
-          <Button
-            variant="contained"
-            onClick={() => generatePDF(false)}
-            endIcon={<PictureAsPdfIcon />}
-          >
-            Get PDF
-          </Button>
-          <form
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-            onSubmit={handleEmail}
-          >
-            <Typography component="span" variant="body1" mr="10px">
-              Or send tickets to your email{" "}
-            </Typography>
-            <TextField
-              fullWidth
-              id="email"
-              name="email"
-              type="email"
-              size="small"
-              required
-              margin="none"
-              placeholder="mymail@domain.com"
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ ml: "5px" }}
-              endIcon={<EmailIcon />}
-            >
-              Send
-            </Button>
-          </form>
-          <Box position="absolute" right={0}>
+        <>
+          <Box className={classes["buttons-container"]}>
             <Button
               variant="contained"
-              onClick={() => navigate("/")}
-              endIcon={<LocalMoviesIcon />}
+              onClick={() => generatePDF(false)}
+              endIcon={<PictureAsPdfIcon />}
             >
-              Watch more movies
+              Get PDF
             </Button>
+            <form
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                width: "80%",
+              }}
+              onSubmit={handleEmail}
+            >
+              <TextField
+                fullWidth
+                id="email"
+                name="email"
+                type="email"
+                size="small"
+                required
+                margin="none"
+                placeholder="Send tickets by email"
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{ ml: "5px" }}
+                endIcon={<EmailIcon sx={{ mr: "5px" }} />}
+              >
+                Send
+              </Button>
+            </form>
+            {!small && (
+              <Box>
+                <Button
+                  variant="contained"
+                  onClick={() => navigate("/")}
+                  endIcon={<LocalMoviesIcon />}
+                >
+                  Watch more
+                  <br />
+                  movies
+                </Button>
+              </Box>
+            )}
           </Box>
-        </Box>
+          {small && (
+            <Box width="100%" sx={{ textAlign: "center" }}>
+              <Button
+                variant="contained"
+                onClick={() => navigate("/")}
+                endIcon={<LocalMoviesIcon />}
+              >
+                Watch more
+                <br />
+                movies
+              </Button>
+            </Box>
+          )}
+        </>
       )}
     </Paper>
   );

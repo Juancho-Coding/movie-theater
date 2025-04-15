@@ -1,10 +1,16 @@
 import { Box, Typography } from "@mui/material";
 import Seat from "./Seat";
 import classes from "./Auditorium.module.css";
+import useMediaQuery from "@mui/material/useMediaQuery";
 
 const Auditorium = ({ layout, onSelectSeat }: props) => {
+  const smallWidth = useMediaQuery("(max-width: 700px)");
   return (
-    <Box className={classes["auditorium"]}>
+    <Box
+      className={`${classes["auditorium"]} ${
+        smallWidth ? classes["auditorium-small"] : ""
+      }`}
+    >
       <Box className={classes["screen"]}>
         <Typography variant="body1" textAlign="center" color="white">
           Screen
