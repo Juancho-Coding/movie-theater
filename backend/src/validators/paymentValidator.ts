@@ -4,11 +4,9 @@ export const paymentValidator = [
   body("session").exists().isNumeric().withMessage("The session id is missing"),
   body("schedule")
     .exists()
-    .isAlphanumeric()
     .withMessage("The information for the payment is incomplete"),
   body("holder")
     .exists()
-    .isAlphanumeric()
     .isLength({ min: 3 })
     .withMessage("The information for the payment is incomplete"),
   body("card")
