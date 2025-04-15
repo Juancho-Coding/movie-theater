@@ -159,3 +159,33 @@ export async function getMovieById(
     res.status(500).json({ error: "Internal error server" });
   }
 }
+
+export async function getMovieIsValid(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  // schedule data and time
+  const date = req.query.date;
+  const time = req.query.time;
+  const movieId = req.query.movie;
+  console.log(movieId, time, date);
+
+  try {
+    //checks for validation error before continuing
+    validationResults(req);
+    let validation = await dbQuery(
+      `SELECT * FROM schedules
+      WHERE movie_id = $1
+      AND show_date = $2
+      AND show_time = $3`,
+      [movieId, date, time]
+    );
+    res.status(200).json({ status: validation.rows.length !== 0 });
+  } catch (error) {
+    console.log(error);
+    // checks if the error was a validation error
+    if (validationResponse(error, res)) return;
+    res.status(500).json({ error: "Internal error server" });
+  }
+}
